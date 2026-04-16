@@ -18,40 +18,76 @@ export default function LearningRoadmapPage() {
   const [form, setForm] = useState({ goal: '', targetRole: '', durationMonths: 6 });
 
   useEffect(() => {
-    api.get('/roadmap').then(({ data }) => {
-      setRoadmaps(data.roadmaps);
-      if (data.roadmaps.length > 0) setSelected(data.roadmaps[0]);
-    }).finally(() => setLoading(false));
+    console.log('[Roadmap] Fetching roadmaps...');
+    api.get('/roadmap')
+      .then(({ data }) => {
+        console.log('[Roadmap] Loaded:', data.roadmaps?.length, 'roadmaps');
+        setRoadmaps(data.roadmaps);
+        if (data.roadmaps.length > 0) setSelected(data.roadmaps[0]);
+      })
+      .catch((err) => {
+        console.error('[Roadmap] Failed to load:', err.response?.data || err.message);
+        toast.error('Failed to load roadmaps');
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const handleGenerate = async (e) => {
     e.preventDefault();
     if (!form.goal) { toast.error('Learning goal is required'); return; }
+
+    console.log('[Roadmap] Creating roadmap with:', form);
     setGenerating(true);
     try {
       const { data } = await api.post('/roadmap/generate', form);
+      console.log('[Roadmap] Created:', data.roadmap?._id, `(${data.roadmap?.phases?.length} phases)`);
       setRoadmaps((prev) => [data.roadmap, ...prev]);
       setSelected(data.roadmap);
       toast.success('Learning roadmap created! 📚');
-    } catch { toast.error('Generation failed'); }
-    finally { setGenerating(false); }
+    } catch (err) {
+      const serverMessage = err.response?.data?.message;
+      const isTimeout = err.code === 'ECONNABORTED';
+      const displayMessage = isTimeout
+        ? 'Request timed out — AI is thinking. Please try again.'
+        : serverMessage || 'Generation failed. Please try again.';
+
+      console.error('[Roadmap] Generation failed:');
+      console.error('  Status :', err.response?.status);
+      console.error('  Message:', serverMessage || err.message);
+      console.error('  Full response:', err.response?.data);
+
+      toast.error(displayMessage);
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const handlePhaseUpdate = async (month, completed) => {
     try {
-      const { data } = await api.put(`/roadmap/${selected._id}/phase/${month}`, { completed, progressPercent: completed ? 100 : 0 });
+      const { data } = await api.put(`/roadmap/${selected._id}/phase/${month}`, {
+        completed,
+        progressPercent: completed ? 100 : 0,
+      });
       setSelected(data.roadmap);
       setRoadmaps((prev) => prev.map((r) => r._id === data.roadmap._id ? data.roadmap : r));
       toast.success(completed ? 'Phase completed! 🎉' : 'Phase marked incomplete');
-    } catch { toast.error('Update failed'); }
+    } catch (err) {
+      console.error('[Roadmap] Phase update failed:', err.response?.data || err.message);
+      toast.error(err.response?.data?.message || 'Update failed');
+    }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this roadmap?')) return;
-    await api.delete(`/roadmap/${id}`);
-    setRoadmaps((prev) => prev.filter((r) => r._id !== id));
-    if (selected?._id === id) setSelected(null);
-    toast.success('Deleted');
+    try {
+      await api.delete(`/roadmap/${id}`);
+      setRoadmaps((prev) => prev.filter((r) => r._id !== id));
+      if (selected?._id === id) setSelected(null);
+      toast.success('Deleted');
+    } catch (err) {
+      console.error('[Roadmap] Delete failed:', err.response?.data || err.message);
+      toast.error(err.response?.data?.message || 'Delete failed');
+    }
   };
 
   return (

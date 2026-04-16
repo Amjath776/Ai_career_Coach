@@ -298,8 +298,12 @@ const getFallbackSkillGap = (currentSkills, targetRole) => ({
 // LEARNING ROADMAP
 // ──────────────────────────────────────────────────────────────────────────────
 const generateLearningRoadmap = async ({ goal, targetRole, currentSkills, durationMonths }) => {
-  if (!model) return getFallbackRoadmap(goal, durationMonths);
+  if (!model) {
+    console.warn('[Gemini] No model — returning fallback roadmap');
+    return getFallbackRoadmap(goal, durationMonths);
+  }
   try {
+    console.log(`[Gemini] generateLearningRoadmap called: goal="${goal}", months=${durationMonths}`);
     const prompt = `
 Create a ${durationMonths}-month learning roadmap for: "${goal}"
 Target Role: ${targetRole}
@@ -318,9 +322,12 @@ Return JSON:
   }]
 }`;
     const text = await generateContent(prompt);
-    return parseJSON(text);
+    console.log('[Gemini] generateLearningRoadmap raw response length:', text.length);
+    const result = parseJSON(text);
+    console.log(`[Gemini] generateLearningRoadmap parsed OK, phases=${result?.phases?.length}`);
+    return result;
   } catch (err) {
-    console.error('Gemini roadmap error:', err.message);
+    console.error('[Gemini] generateLearningRoadmap error:', err.message);
     return getFallbackRoadmap(goal, durationMonths);
   }
 };
