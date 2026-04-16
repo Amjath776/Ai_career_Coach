@@ -89,7 +89,7 @@ export default function SkillGapPage() {
     <div className="page-wrapper">
       <Sidebar />
       <div className="page-content">
-        <Navbar title="Skill Gap Analysis" />
+        <Navbar />
         <div className="page-inner">
           <div className="page-header">
             <h1> Skill Gap Analysis</h1>

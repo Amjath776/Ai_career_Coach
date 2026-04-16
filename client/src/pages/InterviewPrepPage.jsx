@@ -72,7 +72,7 @@ export default function InterviewPrepPage() {
     <div className="page-wrapper">
       <Sidebar />
       <div className="page-content">
-        <Navbar title="Interview Preparation" />
+        <Navbar />
         <div className="page-inner">
           <div className="page-header">
             <h1> Interview Preparation</h1>

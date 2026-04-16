@@ -74,7 +74,7 @@ export default function ResumePage() {
     <div className="page-wrapper">
       <Sidebar />
       <div className="page-content">
-        <Navbar title="Resume Builder" />
+        <Navbar />
         <div className="page-inner">
           <div className="page-header">
             <h1> AI Resume Builder</h1>

@@ -94,7 +94,7 @@ export default function LearningRoadmapPage() {
     <div className="page-wrapper">
       <Sidebar />
       <div className="page-content">
-        <Navbar title="Learning Roadmap" />
+        <Navbar />
         <div className="page-inner">
           <div className="page-header">
             <h1> Learning Roadmap</h1>

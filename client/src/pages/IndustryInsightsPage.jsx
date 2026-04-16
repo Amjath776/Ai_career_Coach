@@ -65,7 +65,7 @@ export default function IndustryInsightsPage() {
     <div className="page-wrapper">
       <Sidebar />
       <div className="page-content">
-        <Navbar title="Industry Insights" />
+        <Navbar />
         <div className="page-inner">
           <div className="page-header">
             <h1> Industry Insights</h1>

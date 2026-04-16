@@ -53,7 +53,7 @@ export default function CoverLetterPage() {
     <div className="page-wrapper">
       <Sidebar />
       <div className="page-content">
-        <Navbar title="Cover Letter Generator" />
+        <Navbar />
         <div className="page-inner">
           <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>

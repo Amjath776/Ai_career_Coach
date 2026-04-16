@@ -32,7 +32,6 @@ export default function LandingPage() {
       <nav className="landing-nav">
         <div className="landing-nav-inner">
           <div className="landing-nav-logo">
-            <div className="landing-nav-logo-icon" style={{ fontSize: '1.25rem' }}></div>
             AI Career <span>Coach</span>
           </div>
           <div className="landing-nav-links">

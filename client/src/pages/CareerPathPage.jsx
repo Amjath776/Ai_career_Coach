@@ -52,7 +52,7 @@ export default function CareerPathPage() {
     <div className="page-wrapper">
       <Sidebar />
       <div className="page-content">
-        <Navbar title="Career Path Recommendations" />
+        <Navbar />
         <div className="page-inner">
           <div className="page-header">
             <h1> Career Path Recommendations</h1>
