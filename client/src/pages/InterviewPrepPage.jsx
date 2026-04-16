@@ -170,12 +170,7 @@ export default function InterviewPrepPage() {
                         <div className="question-number">Question {currentQ + 1} of {selected.questions.length} · {q.category} · {q.difficulty}</div>
                         <div className="question-text">{q.question}</div>
 
-                        {/* Tips */}
-                        {q.tips?.length > 0 && (
-                          <div style={{ background: '#fef3c7', borderRadius: 'var(--radius)', padding: '0.75rem', marginBottom: '1rem', fontSize: '0.875rem' }}>
-                             <strong>Tips:</strong> {q.tips.join(' · ')}
-                          </div>
-                        )}
+
 
                         {/* Answer box */}
                         <div className="form-group">

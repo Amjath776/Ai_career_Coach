@@ -156,7 +156,7 @@ export default function JobRecommendationsPage() {
                           <span className="badge badge-muted">{job.type}</span>
                           {job.salary?.min && (
                             <span className="badge badge-success">
-                              ${job.salary.min.toLocaleString()}–${job.salary.max.toLocaleString()}
+                              ₹{job.salary.min.toLocaleString()}–₹{job.salary.max.toLocaleString()}
                             </span>
                           )}
                           {job.source && <span className="badge badge-muted">{job.source}</span>}
@@ -165,19 +165,7 @@ export default function JobRecommendationsPage() {
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem', marginTop: '0.5rem' }}>
                           {job.requiredSkills?.slice(0, 4).map((s) => <span key={s} className="skill-tag">{s}</span>)}
                         </div>
-                        <div className="job-card-actions">
-                          <button
-                            className={`btn btn-sm ${job.isSaved ? 'btn-accent' : 'btn-outline'}`}
-                            onClick={() => handleToggleSave(job._id, job.isSaved)}
-                          >
-                            {job.isSaved ? ' Saved' : ' Save'}
-                          </button>
-                          {!job.isApplied && (
-                            <button className="btn btn-primary btn-sm" onClick={() => handleApply(job._id)}>
-                              Mark Applied 
-                            </button>
-                          )}
-                        </div>
+
                       </div>
                     ))}
                   </div>
