@@ -139,8 +139,12 @@ const getFallbackCoverLetter = (name, jobTitle, companyName) =>
 // JOB RECOMMENDATIONS
 // ──────────────────────────────────────────────────────────────────────────────
 const generateJobRecommendations = async ({ skills, currentTitle, industry, preferences }) => {
-  if (!model) return getFallbackJobs(currentTitle);
+  if (!model) {
+    console.warn('[Gemini] No model — returning fallback jobs');
+    return getFallbackJobs(currentTitle);
+  }
   try {
+    console.log(`[Gemini] generateJobRecommendations called for role="${currentTitle}" industry="${industry}"`);
     const prompt = `
 Generate 8 realistic job recommendations for a professional with:
 Current Role: ${currentTitle}
@@ -161,9 +165,12 @@ Return a JSON array of jobs with this structure:
   "source": "AI Generated"
 }]`;
     const text = await generateContent(prompt);
-    return parseJSON(text);
+    console.log('[Gemini] generateJobRecommendations raw response length:', text.length);
+    const result = parseJSON(text);
+    console.log(`[Gemini] generateJobRecommendations parsed OK, jobs=${result?.length}`);
+    return result;
   } catch (err) {
-    console.error('Gemini jobs error:', err.message);
+    console.error('[Gemini] generateJobRecommendations error:', err.message);
     return getFallbackJobs(currentTitle);
   }
 };

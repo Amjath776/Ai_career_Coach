@@ -16,18 +16,44 @@ export default function JobRecommendationsPage() {
   const [filters, setFilters] = useState({ keywords: '', location: '', jobType: '' });
 
   useEffect(() => {
-    api.get('/jobs').then(({ data }) => setRecommendations(data.recommendations)).finally(() => setLoading(false));
+    console.log('[Jobs] Fetching existing recommendations...');
+    api.get('/jobs')
+      .then(({ data }) => {
+        console.log('[Jobs] Loaded:', data.recommendations ? `${data.recommendations.jobs?.length} jobs` : 'none');
+        setRecommendations(data.recommendations);
+      })
+      .catch((err) => {
+        console.error('[Jobs] Failed to load recommendations:', err.response?.data || err.message);
+        toast.error('Failed to load saved recommendations');
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const handleGenerate = async (e) => {
     e.preventDefault();
+    console.log('[Jobs] Generating recommendations with filters:', filters);
     setGenerating(true);
     try {
       const { data } = await api.post('/jobs/generate', filters);
+      console.log('[Jobs] Generation succeeded:', data.recommendations?.jobs?.length, 'jobs');
       setRecommendations(data.recommendations);
       toast.success('Job recommendations updated! 💼');
-    } catch { toast.error('Failed to generate recommendations'); }
-    finally { setGenerating(false); }
+    } catch (err) {
+      const serverMessage = err.response?.data?.message;
+      const isTimeout = err.code === 'ECONNABORTED';
+      const displayMessage = isTimeout
+        ? 'Request timed out — AI is still thinking. Try again.'
+        : serverMessage || 'Failed to generate recommendations. Please try again.';
+
+      console.error('[Jobs] Generation failed:');
+      console.error('  Status :', err.response?.status);
+      console.error('  Message:', serverMessage || err.message);
+      console.error('  Full response:', err.response?.data);
+
+      toast.error(displayMessage);
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const handleToggleSave = async (jobId, isSaved) => {
@@ -38,7 +64,10 @@ export default function JobRecommendationsPage() {
         jobs: prev.jobs.map((j) => j._id === jobId ? { ...j, isSaved: !j.isSaved } : j),
       }));
       toast.success(isSaved ? 'Removed from saved' : 'Job saved!');
-    } catch { toast.error('Action failed'); }
+    } catch (err) {
+      console.error('[Jobs] Save toggle failed:', err.response?.data || err.message);
+      toast.error(err.response?.data?.message || 'Action failed');
+    }
   };
 
   const handleApply = async (jobId) => {
@@ -49,7 +78,10 @@ export default function JobRecommendationsPage() {
         jobs: prev.jobs.map((j) => j._id === jobId ? { ...j, isApplied: true } : j),
       }));
       toast.success('Marked as applied! 🎉');
-    } catch { toast.error('Action failed'); }
+    } catch (err) {
+      console.error('[Jobs] Mark applied failed:', err.response?.data || err.message);
+      toast.error(err.response?.data?.message || 'Action failed');
+    }
   };
 
   const getMatchColor = (score) => score >= 80 ? 'badge-success' : score >= 60 ? 'badge-primary' : 'badge-muted';

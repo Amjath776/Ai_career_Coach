@@ -3,39 +3,63 @@
  */
 
 const JobRecommendation = require('../models/JobRecommendation');
-const User = require('../models/User');
 const gemini = require('../services/geminiService');
 
 /** GET /api/jobs — Get latest job recommendations */
 const getJobs = async (req, res) => {
-  const recommendations = await JobRecommendation.findOne({ user: req.user.id }).sort({ createdAt: -1 });
-  res.json({ success: true, recommendations });
+  // BUG FIX: findOne() does NOT support .sort() — use find().limit(1) instead
+  const [recommendations] = await JobRecommendation
+    .find({ user: req.user.id })
+    .sort({ createdAt: -1 })
+    .limit(1);
+
+  console.log(`[Jobs] GET for user=${req.user.id}, found=${!!recommendations}`);
+  res.json({ success: true, recommendations: recommendations || null });
 };
 
 /** POST /api/jobs/generate — Generate AI job recommendations */
 const generateJobs = async (req, res) => {
-  const user = await User.findById(req.user.id);
   const { keywords, location, jobType, minSalary } = req.body;
 
-  const jobs = await gemini.generateJobRecommendations({
-    skills: user.skills || [],
-    currentTitle: user.currentTitle || '',
-    industry: user.industry || '',
-    preferences: { workStyle: user.workPreferences?.workStyle, jobType: jobType || user.workPreferences?.jobType, location, minSalary },
+  // BUG FIX: req.user is already populated by protect middleware — no extra DB query
+  const { skills, currentTitle, industry, workPreferences } = req.user;
+
+  console.log(`[Jobs] Generating for user=${req.user.id}`, {
+    keywords, location, jobType, skills: skills?.length,
   });
 
-  // Upsert the recommendations document
+  const jobs = await gemini.generateJobRecommendations({
+    skills:       skills || [],
+    currentTitle: currentTitle || '',
+    industry:     industry || '',
+    preferences: {
+      workStyle: workPreferences?.workStyle || '',
+      jobType:   jobType || workPreferences?.jobType || '',
+      location:  location || '',
+      minSalary: minSalary || 0,
+    },
+  });
+
+  console.log(`[Jobs] Gemini returned ${jobs?.length ?? 0} jobs`);
+
   const recommendations = await JobRecommendation.findOneAndUpdate(
     { user: req.user.id },
     {
       user: req.user.id,
       jobs,
-      filters: { keywords: keywords ? keywords.split(',').map((k) => k.trim()) : [], location, jobType, minSalary, skills: user.skills },
+      filters: {
+        keywords: keywords ? keywords.split(',').map((k) => k.trim()) : [],
+        location,
+        jobType,
+        minSalary,
+        skills: skills || [],
+      },
       generatedAt: new Date(),
     },
-    { new: true, upsert: true }
+    { new: true, upsert: true, runValidators: true }
   );
 
+  console.log(`[Jobs] Saved to DB, id=${recommendations._id}, jobs=${recommendations.jobs?.length}`);
   res.json({ success: true, recommendations });
 };
 
@@ -49,6 +73,7 @@ const toggleSaveJob = async (req, res) => {
 
   job.isSaved = !job.isSaved;
   await rec.save();
+  console.log(`[Jobs] Toggled save for jobId=${req.params.jobId}, isSaved=${job.isSaved}`);
   res.json({ success: true, isSaved: job.isSaved });
 };
 
@@ -62,7 +87,9 @@ const markApplied = async (req, res) => {
 
   job.isApplied = true;
   await rec.save();
+  console.log(`[Jobs] Marked applied for jobId=${req.params.jobId}`);
   res.json({ success: true, message: 'Marked as applied' });
 };
 
 module.exports = { getJobs, generateJobs, toggleSaveJob, markApplied };
+
