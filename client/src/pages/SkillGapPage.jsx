@@ -23,23 +23,47 @@ export default function SkillGapPage() {
   const [form, setForm] = useState({ targetRole: '', targetIndustry: '' });
 
   useEffect(() => {
-    api.get('/skill-gap').then(({ data }) => {
-      setAnalyses(data.skillGaps);
-      if (data.skillGaps.length > 0) setSelected(data.skillGaps[0]);
-    }).finally(() => setLoading(false));
+    console.log('[SkillGap] Fetching existing analyses...');
+    api.get('/skill-gap')
+      .then(({ data }) => {
+        console.log('[SkillGap] Loaded analyses:', data.skillGaps?.length);
+        setAnalyses(data.skillGaps);
+        if (data.skillGaps.length > 0) setSelected(data.skillGaps[0]);
+      })
+      .catch((err) => {
+        console.error('[SkillGap] Failed to load analyses:', err.response?.data || err.message);
+        toast.error('Failed to load previous analyses');
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const handleAnalyze = async (e) => {
     e.preventDefault();
     if (!form.targetRole) { toast.error('Target role is required'); return; }
+
+    console.log('[SkillGap] Submitting analysis request:', form);
     setAnalyzing(true);
     try {
       const { data } = await api.post('/skill-gap/analyze', form);
+      console.log('[SkillGap] Analysis succeeded:', data.skillGap);
       setAnalyses((prev) => [data.skillGap, ...prev]);
       setSelected(data.skillGap);
       toast.success('Skill gap analysis complete! 🎯');
-    } catch { toast.error('Analysis failed'); }
-    finally { setAnalyzing(false); }
+    } catch (err) {
+      // Extract the most meaningful error message available
+      const serverMessage = err.response?.data?.message;
+      const networkError = err.code === 'ECONNABORTED' ? 'Request timed out — the AI is taking too long. Try again.' : null;
+      const displayMessage = serverMessage || networkError || 'Analysis failed. Please try again.';
+
+      console.error('[SkillGap] Analysis failed:');
+      console.error('  Status :', err.response?.status);
+      console.error('  Message:', serverMessage || err.message);
+      console.error('  Full error:', err.response?.data);
+
+      toast.error(displayMessage);
+    } finally {
+      setAnalyzing(false);
+    }
   };
 
   const radarData = selected ? {

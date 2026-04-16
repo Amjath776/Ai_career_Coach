@@ -38,10 +38,30 @@ const generateContent = async (prompt) => {
 
 // ── Parse JSON from AI response ───────────────────────────────────────────────
 const parseJSON = (text) => {
-  // Extract JSON from markdown code blocks if present
+  // Step 1: try to find a markdown code block
   const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-  const rawJSON = jsonMatch ? jsonMatch[1] : text;
-  return JSON.parse(rawJSON.trim());
+  let rawJSON = jsonMatch ? jsonMatch[1] : text;
+
+  // Step 2: if no code block, extract substring from first { or [ to last } or ]
+  if (!jsonMatch) {
+    const firstCurly  = rawJSON.indexOf('{');
+    const firstSquare = rawJSON.indexOf('[');
+    const firstBracket = Math.min(
+      firstCurly  > -1 ? firstCurly  : Infinity,
+      firstSquare > -1 ? firstSquare : Infinity
+    );
+    const lastBracket = Math.max(rawJSON.lastIndexOf('}'), rawJSON.lastIndexOf(']'));
+    if (firstBracket !== Infinity && lastBracket > firstBracket) {
+      rawJSON = rawJSON.substring(firstBracket, lastBracket + 1);
+    }
+  }
+
+  try {
+    return JSON.parse(rawJSON.trim());
+  } catch (e) {
+    console.error('[Gemini] parseJSON failed. Raw text was:', text.slice(0, 500));
+    throw new Error(`Gemini returned unparseable JSON: ${e.message}`);
+  }
 };
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -221,8 +241,12 @@ const getFallbackCareerPaths = (currentRole, targetRole) => ({
 // SKILL GAP ANALYSIS
 // ──────────────────────────────────────────────────────────────────────────────
 const analyzeSkillGap = async ({ currentSkills, targetRole, industry }) => {
-  if (!model) return getFallbackSkillGap(currentSkills, targetRole);
+  if (!model) {
+    console.warn('[Gemini] No model — returning fallback skill gap');
+    return getFallbackSkillGap(currentSkills, targetRole);
+  }
   try {
+    console.log(`[Gemini] analyzeSkillGap called for role="${targetRole}" industry="${industry}"`);
     const prompt = `
 Perform a skill gap analysis for someone targeting: "${targetRole}" in "${industry}"
 Current Skills: ${currentSkills.join(', ')}
@@ -241,9 +265,12 @@ Return JSON:
   "prioritizedLearningOrder": []
 }`;
     const text = await generateContent(prompt);
-    return parseJSON(text);
+    console.log('[Gemini] analyzeSkillGap raw response length:', text.length);
+    const result = parseJSON(text);
+    console.log('[Gemini] analyzeSkillGap parsed OK, overallReadiness:', result.overallReadiness);
+    return result;
   } catch (err) {
-    console.error('Gemini skill gap error:', err.message);
+    console.error('[Gemini] analyzeSkillGap error:', err.message);
     return getFallbackSkillGap(currentSkills, targetRole);
   }
 };
