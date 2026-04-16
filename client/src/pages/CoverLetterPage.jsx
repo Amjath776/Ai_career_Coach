@@ -34,7 +34,7 @@ export default function CoverLetterPage() {
       setLetters((prev) => [data.coverLetter, ...prev]);
       setSelected(data.coverLetter);
       setShowForm(false);
-      toast.success('Cover letter generated! ✉️');
+      toast.success('Cover letter generated! ');
     } catch { toast.error('Generation failed. Please try again.'); }
     finally { setGenerating(false); }
   };
@@ -57,7 +57,7 @@ export default function CoverLetterPage() {
         <div className="page-inner">
           <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <h1>✉️ Cover Letter Generator</h1>
+              <h1> Cover Letter Generator</h1>
               <p>AI-generated cover letters tailored to each job application.</p>
             </div>
             <button className="btn btn-primary" onClick={() => { setShowForm(true); setSelected(null); }}>+ New Cover Letter</button>
@@ -69,7 +69,7 @@ export default function CoverLetterPage() {
               <div>
                 {letters.length === 0 && !showForm ? (
                   <div className="card" style={{ textAlign: 'center', padding: '2rem' }}>
-                    <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>✉️</div>
+                    <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}></div>
                     <p style={{ color: 'var(--muted)', fontSize: '0.9rem' }}>No cover letters yet. Create your first one!</p>
                     <button className="btn btn-primary btn-sm" style={{ marginTop: '1rem' }} onClick={() => setShowForm(true)}>Generate Now</button>
                   </div>
@@ -133,7 +133,7 @@ export default function CoverLetterPage() {
                       </div>
                       <div style={{ display: 'flex', gap: '0.75rem' }}>
                         <button type="submit" className="btn btn-primary" disabled={generating}>
-                          {generating ? '🤖 Generating…' : '🤖 Generate with AI'}
+                          {generating ? ' Generating…' : ' Generate with AI'}
                         </button>
                         <button type="button" className="btn btn-ghost" onClick={() => setShowForm(false)}>Cancel</button>
                       </div>
@@ -154,7 +154,7 @@ export default function CoverLetterPage() {
                       <button className="btn btn-outline btn-sm" onClick={() => {
                         navigator.clipboard.writeText(selected.content);
                         toast.success('Copied to clipboard!');
-                      }}>📋 Copy</button>
+                      }}> Copy</button>
                     </div>
                     <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius)', padding: '1.5rem', lineHeight: 1.8, whiteSpace: 'pre-wrap', fontSize: '0.9375rem' }}>
                       {selected.content}

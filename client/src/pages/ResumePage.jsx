@@ -65,7 +65,7 @@ export default function ResumePage() {
       const { data } = await api.post('/resume/analyze', { content, targetRole });
       setFeedback(data.feedback);
       setActiveTab('feedback');
-      toast.success('AI analysis complete! ✨');
+      toast.success('AI analysis complete! ');
     } catch { toast.error('Analysis failed. Please try again.'); }
     finally { setAnalyzing(false); }
   };
@@ -77,7 +77,7 @@ export default function ResumePage() {
         <Navbar title="Resume Builder" />
         <div className="page-inner">
           <div className="page-header">
-            <h1>📄 AI Resume Builder</h1>
+            <h1> AI Resume Builder</h1>
             <p>Paste or type your resume content, then get AI-powered feedback and optimization suggestions.</p>
           </div>
 
@@ -86,7 +86,7 @@ export default function ResumePage() {
               <div className="tabs" style={{ marginBottom: '1.5rem' }}>
                 {['editor', 'feedback'].map((tab) => (
                   <button key={tab} className={`tab-btn ${activeTab === tab ? 'active' : ''}`} onClick={() => setActiveTab(tab)}>
-                    {tab === 'editor' ? '✏️ Resume Editor' : `🤖 AI Feedback ${feedback ? `(Score: ${feedback.overallScore})` : ''}`}
+                    {tab === 'editor' ? ' Resume Editor' : ` AI Feedback ${feedback ? `(Score: ${feedback.overallScore})` : ''}`}
                   </button>
                 ))}
               </div>
@@ -98,7 +98,7 @@ export default function ResumePage() {
                       <h3 className="card-title">Resume Content</h3>
                       <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button className="btn btn-outline btn-sm" onClick={handleSave} disabled={saving}>
-                          {saving ? 'Saving…' : '💾 Save'}
+                          {saving ? 'Saving…' : ' Save'}
                         </button>
                       </div>
                     </div>
@@ -127,10 +127,10 @@ export default function ResumePage() {
                     </div>
                     <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                       <button className="btn btn-primary btn-lg" onClick={handleAnalyze} disabled={analyzing}>
-                        {analyzing ? '🤖 Analyzing with AI…' : '🤖 Analyze with AI'}
+                        {analyzing ? ' Analyzing with AI…' : ' Analyze with AI'}
                       </button>
                       <button className="btn btn-outline" onClick={handleSave} disabled={saving}>
-                        {saving ? 'Saving…' : '💾 Save Draft'}
+                        {saving ? 'Saving…' : ' Save Draft'}
                       </button>
                     </div>
                   </div>
@@ -141,7 +141,7 @@ export default function ResumePage() {
                 <div>
                   {!feedback ? (
                     <div className="card" style={{ textAlign: 'center', padding: '4rem' }}>
-                      <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🤖</div>
+                      
                       <h3>No Analysis Yet</h3>
                       <p style={{ color: 'var(--muted)', marginTop: '0.5rem' }}>Go to the Resume Editor tab and click "Analyze with AI" to get feedback.</p>
                       <button className="btn btn-primary" style={{ marginTop: '1.5rem' }} onClick={() => setActiveTab('editor')}>Go to Editor →</button>
@@ -174,11 +174,11 @@ export default function ResumePage() {
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                         {/* Strengths */}
                         <div className="card">
-                          <div className="card-header"><h3 className="card-title">✅ Strengths</h3></div>
+                          <div className="card-header"><h3 className="card-title"> Strengths</h3></div>
                           <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                             {feedback.strengths?.map((s, i) => (
                               <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontSize: '0.9rem' }}>
-                                <span style={{ color: 'var(--success)', marginTop: '0.1rem' }}>✓</span> {s}
+                                <span style={{ color: 'var(--success)', marginTop: '0.1rem' }}></span> {s}
                               </li>
                             ))}
                           </ul>
@@ -186,7 +186,7 @@ export default function ResumePage() {
 
                         {/* Improvements */}
                         <div className="card">
-                          <div className="card-header"><h3 className="card-title">⚡ Improvements</h3></div>
+                          <div className="card-header"><h3 className="card-title"> Improvements</h3></div>
                           <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                             {feedback.improvements?.map((s, i) => (
                               <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontSize: '0.9rem' }}>
@@ -200,13 +200,13 @@ export default function ResumePage() {
                       {/* Action verbs + keywords */}
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                         <div className="card">
-                          <div className="card-header"><h3 className="card-title">💪 Recommended Action Verbs</h3></div>
+                          <div className="card-header"><h3 className="card-title"> Recommended Action Verbs</h3></div>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                             {feedback.actionVerbs?.map((v) => <span key={v} className="badge badge-primary">{v}</span>)}
                           </div>
                         </div>
                         <div className="card">
-                          <div className="card-header"><h3 className="card-title">🔑 Keyword Suggestions</h3></div>
+                          <div className="card-header"><h3 className="card-title"> Keyword Suggestions</h3></div>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                             {feedback.keywordSuggestions?.map((k) => <span key={k} className="badge badge-accent">{k}</span>)}
                           </div>
@@ -216,7 +216,7 @@ export default function ResumePage() {
                       {/* Suggested summary */}
                       {feedback.suggestedSummary && (
                         <div className="card">
-                          <div className="card-header"><h3 className="card-title">✨ AI-Suggested Professional Summary</h3></div>
+                          <div className="card-header"><h3 className="card-title"> AI-Suggested Professional Summary</h3></div>
                           <p style={{ color: 'var(--text)', lineHeight: 1.7, fontStyle: 'italic', padding: '1rem', background: 'var(--surface)', borderRadius: 'var(--radius)' }}>
                             "{feedback.suggestedSummary}"
                           </p>

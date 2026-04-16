@@ -20,10 +20,10 @@ import { useAuth } from '../context/AuthContext';
 ChartJS.register(CategoryScale, LinearScale, BarElement, RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
 const QUICK_TOOLS = [
-  { icon: '📄', label: 'Analyze Resume', path: '/resume', color: '#dbeafe' },
-  { icon: '✉️', label: 'Write Cover Letter', path: '/cover-letter', color: '#fef3c7' },
-  { icon: '🎤', label: 'Interview Prep', path: '/interview', color: '#d1fae5' },
-  { icon: '🎯', label: 'Skill Gap Check', path: '/skill-gap', color: '#ede9fe' },
+  { icon: '', label: 'Analyze Resume', path: '/resume', color: '#dbeafe' },
+  { icon: '', label: 'Write Cover Letter', path: '/cover-letter', color: '#fef3c7' },
+  { icon: '', label: 'Interview Prep', path: '/interview', color: '#d1fae5' },
+  { icon: '', label: 'Skill Gap Check', path: '/skill-gap', color: '#ede9fe' },
 ];
 
 export default function DashboardPage() {
@@ -82,7 +82,7 @@ export default function DashboardPage() {
         <div className="page-inner">
           {/* Welcome */}
           <div className="page-header">
-            <h1>Welcome back, {user?.name?.split(' ')[0]}! 👋</h1>
+            <h1>Welcome back, {user?.name?.split(' ')[0]}! </h1>
             <p>Here's your career progress overview. Keep pushing forward.</p>
           </div>
 
@@ -91,28 +91,28 @@ export default function DashboardPage() {
               {/* Stats */}
               <div className="dashboard-stats">
                 <div className="stat-card">
-                  <div className="stat-icon navy">📄</div>
+                  
                   <div className="stat-content">
                     <div className="stat-value">{dashData?.stats?.resumeScore || 0}</div>
                     <div className="stat-label">Resume Score</div>
                   </div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-icon amber">🎯</div>
+                  
                   <div className="stat-content">
                     <div className="stat-value">{dashData?.stats?.skillReadiness || 0}%</div>
                     <div className="stat-label">Skill Readiness</div>
                   </div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-icon green">📚</div>
+                  
                   <div className="stat-content">
                     <div className="stat-value">{dashData?.stats?.roadmapProgress || 0}%</div>
                     <div className="stat-label">Roadmap Progress</div>
                   </div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-icon blue">🎤</div>
+                  
                   <div className="stat-content">
                     <div className="stat-value">{dashData?.stats?.interviewSessions || 0}</div>
                     <div className="stat-label">Interview Sessions</div>
@@ -142,7 +142,7 @@ export default function DashboardPage() {
                     />
                   ) : (
                     <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--muted)' }}>
-                      <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🎯</div>
+                      
                       <p>Add skills to your profile to see the chart</p>
                       <Link to="/resume" className="btn btn-primary btn-sm" style={{ marginTop: '1rem' }}>Update Profile</Link>
                     </div>
@@ -188,7 +188,7 @@ export default function DashboardPage() {
                       onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'}
                       onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
                     >
-                      <div style={{ fontSize: '2rem' }}>{tool.icon}</div>
+                      {tool.icon && <div style={{ fontSize: '2rem' }}>{tool.icon}</div>}
                       <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text)' }}>{tool.label}</div>
                     </Link>
                   ))}
@@ -206,9 +206,7 @@ export default function DashboardPage() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                       {dashData.recentActivity.map((a, i) => (
                         <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.625rem', borderRadius: 'var(--radius)', background: 'var(--surface)' }}>
-                          <span style={{ fontSize: '1.25rem' }}>
-                            {a.type === 'cover-letter' ? '✉️' : a.type === 'interview' ? '🎤' : '📄'}
-                          </span>
+
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ fontSize: '0.875rem', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{a.title}</div>
                             <div style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>{new Date(a.date).toLocaleDateString()}</div>

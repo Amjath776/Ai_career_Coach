@@ -1,0 +1,139 @@
+
+--- pages/SkillGapPage.jsx ---
+51: toast.success('Skill gap analysis complete! 🎯');
+95: <h1>🎯 Skill Gap Analysis</h1>
+116: {analyzing ? '🤖 Analyzing…' : '🎯 Analyze Gap'}
+162: ⏱️ Est. time: {skill.estimatedLearningTime}
+169: 📖 {r.url ? <a href={r.url} target="_blank" rel="noreferrer" style={{ color: 'var(--info)' }}>{r.title}</a> : r.title}
+182: <div className="card-header"><h3 className="card-title">📋 Recommended Learning Order</h3></div>
+195: <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎯</div>
+
+--- pages/ResumePage.jsx ---
+68: toast.success('AI analysis complete! ✨');
+80: <h1>📄 AI Resume Builder</h1>
+89: {tab === 'editor' ? '✏️ Resume Editor' : `🤖 AI Feedback ${feedback ? `(Score: ${feedback.overallScore})` : ''}`}
+101: {saving ? 'Saving…' : '💾 Save'}
+130: {analyzing ? '🤖 Analyzing with AI…' : '🤖 Analyze with AI'}
+133: {saving ? 'Saving…' : '💾 Save Draft'}
+144: <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🤖</div>
+177: <div className="card-header"><h3 className="card-title">✅ Strengths</h3></div>
+181: <span style={{ color: 'var(--success)', marginTop: '0.1rem' }}>✓</span> {s}
+189: <div className="card-header"><h3 className="card-title">⚡ Improvements</h3></div>
+203: <div className="card-header"><h3 className="card-title">💪 Recommended Action Verbs</h3></div>
+209: <div className="card-header"><h3 className="card-title">🔑 Keyword Suggestions</h3></div>
+219: <div className="card-header"><h3 className="card-title">✨ AI-Suggested Professional Summary</h3></div>
+
+--- pages/LoginPage.jsx ---
+25: toast.success('Welcome back! 👋');
+
+--- pages/LearningRoadmapPage.jsx ---
+46: toast.success('Learning roadmap created! 📚');
+73: toast.success(completed ? 'Phase completed! 🎉' : 'Phase marked incomplete');
+100: <h1>📚 Learning Roadmap</h1>
+127: {generating ? '🤖 Generating…' : '📚 Create'}
+183: <div className={`phase-number ${phase.completed ? 'done' : ''}`}>{phase.completed ? '✓' : phase.month}</div>
+197: <span style={{ fontSize: '0.8125rem', color: 'var(--muted)' }}>{expandedPhase === phase.month ? '▲' : '▼'}</span>
+205: <div style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.5rem' }}>📖 Topics</div>
+209: <div style={{ fontWeight: 600, fontSize: '0.875rem', marginTop: '1rem', marginBottom: '0.5rem' }}>🏆 Milestones</div>
+211: {phase.milestones?.map((m, i) => <li key={i} style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>✓ {m}</li>)}
+215: <div style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.5rem' }}>🔗 Resources</div>
+222: <div style={{ fontWeight: 600, fontSize: '0.875rem', marginTop: '1rem', marginBottom: '0.5rem' }}>💻 Projects</div>
+238: <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📚</div>
+
+--- pages/LandingPage.jsx ---
+10: { icon: '📄', title: 'AI Resume Analysis', desc: 'Get detailed feedback on your resume with ATS optimization, action verb suggestions, and a professional score.' },
+11: { icon: '✉️', title: 'Cover Letter Generator', desc: 'Generate tailored, role-specific cover letters in seconds with customizable tone and highlights.' },
+12: { icon: '💼', title: 'Smart Job Matching', desc: 'Discover jobs that match your skills and preferences with AI-powered match scoring.' },
+13: { icon: '🗺️', title: 'Career Path Planning', desc: 'Visualize your journey from current role to dream job with step-by-step roadmaps.' },
+14: { icon: '🎯', title: 'Skill Gap Analysis', desc: 'Identify missing skills for your target role with prioritized learning resources and timelines.' },
+15: { icon: '📚', title: 'Learning Roadmaps', desc: 'Follow structured monthly plans with curated resources, projects, and milestone tracking.' },
+16: { icon: '🎤', title: 'Interview Preparation', desc: 'Practice with role-specific questions and get instant AI feedback on your answers.' },
+17: { icon: '📊', title: 'Industry Insights', desc: 'Access real-time salary data, top skills, market trends, and growth forecasts by industry.' },
+18: { icon: '🧠', title: 'Personality Analysis', desc: 'Discover career paths aligned with your Myers-Briggs personality type and work preferences.' },
+
+--- pages/JobRecommendationsPage.jsx ---
+40: toast.success('Job recommendations updated! 💼');
+80: toast.success('Marked as applied! 🎉');
+96: <h1>💼 Job Recommendations</h1>
+127: {generating ? '🤖 Generating…' : '🔍 Find Jobs'}
+135: <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>💼</div>
+163: {job.isApplied && <span className="badge badge-primary">✓ Applied</span>}
+173: {job.isSaved ? '★ Saved' : '☆ Save'}
+177: Mark Applied ✓
+
+--- pages/InterviewPrepPage.jsx ---
+41: toast.success('Interview session started! 🎤');
+64: toast.success('Session completed! Great work 🎉');
+78: <h1>🎤 Interview Preparation</h1>
+114: {starting ? '⏳ Starting…' : '🎤 Start'}
+176: 💡 <strong>Tips:</strong> {q.tips.join(' · ')}
+196: {submitting ? '🤖 Evaluating…' : '🤖 Submit & Get AI Feedback'}
+200: <h4>🤖 AI Feedback</h4>
+219: <button className="btn btn-accent btn-sm" onClick={handleComplete}>Complete Session ✓</button>
+229: <div className="card-header"><h3 className="card-title">📋 Session Summary</h3></div>
+249: <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎤</div>
+
+--- pages/IndustryInsightsPage.jsx ---
+40: toast.success('Industry insights generated! 📊');
+71: <h1>📊 Industry Insights</h1>
+97: {generating ? '🤖 Generating…' : '📊 Generate'}
+142: 📈 <strong>Growth Outlook:</strong> {selected.growthOutlook}
+150: <div className="card-header"><h3 className="card-title">💰 Salary Ranges by Level (USD)</h3></div>
+162: <div className="card-header"><h3 className="card-title">🔥 Top In-Demand Skills</h3></div>
+184: <div className="card-header"><h3 className="card-title">🏆 Top Certifications</h3></div>
+194: <div className="card-header"><h3 className="card-title">🏢 Top Companies</h3></div>
+205: <div className="card-header"><h3 className="card-title">🌐 Work Trends</h3></div>
+209: ✦ {t}
+219: <div className="card-header"><h3 className="card-title">📚 Recommended Training</h3></div>
+236: <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📊</div>
+
+--- pages/DashboardPage.jsx ---
+23: { icon: '📄', label: 'Analyze Resume', path: '/resume', color: '#dbeafe' },
+24: { icon: '✉️', label: 'Write Cover Letter', path: '/cover-letter', color: '#fef3c7' },
+25: { icon: '🎤', label: 'Interview Prep', path: '/interview', color: '#d1fae5' },
+26: { icon: '🎯', label: 'Skill Gap Check', path: '/skill-gap', color: '#ede9fe' },
+85: <h1>Welcome back, {user?.name?.split(' ')[0]}! 👋</h1>
+94: <div className="stat-icon navy">📄</div>
+101: <div className="stat-icon amber">🎯</div>
+108: <div className="stat-icon green">📚</div>
+115: <div className="stat-icon blue">🎤</div>
+145: <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🎯</div>
+210: {a.type === 'cover-letter' ? '✉️' : a.type === 'interview' ? '🎤' : '📄'}
+
+--- pages/CoverLetterPage.jsx ---
+37: toast.success('Cover letter generated! ✉️');
+60: <h1>✉️ Cover Letter Generator</h1>
+72: <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>✉️</div>
+136: {generating ? '🤖 Generating…' : '🤖 Generate with AI'}
+157: }}>📋 Copy</button>
+
+--- pages/CareerPathPage.jsx ---
+91: {generating ? '🤖 Generating…' : '🗺️ Generate'}
+119: <div className="card-header"><h3 className="card-title">🧠 Personality Insights {selected.mbtiType && `(${selected.mbtiType})`}</h3></div>
+126: <div style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.5rem', color: 'var(--success)' }}>✓ Strengths</div>
+130: <div style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.5rem', color: 'var(--danger)' }}>⚡ Challenges</div>
+149: <span className="badge badge-muted">⏱️ {path.timelineYears}y</span>
+150: <span className="badge badge-success">📈 {path.estimatedSalaryGrowth}</span>
+168: ⏱️ {step.duration} · 💰 ${step.avgSalary?.toLocaleString() || 'N/A'}/yr
+175: 💡 {step.tips}
+194: <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🗺️</div>
+
+--- components/Sidebar.jsx ---
+10: { label: 'Dashboard', icon: '🏠', path: '/dashboard' },
+13: { label: 'Resume Builder', icon: '📄', path: '/resume' },
+14: { label: 'Cover Letter', icon: '✉️', path: '/cover-letter' },
+15: { label: 'Job Recommendations', icon: '💼', path: '/jobs' },
+16: { label: 'Career Path', icon: '🗺️', path: '/career-path' },
+17: { label: 'Skill Gap Analysis', icon: '🎯', path: '/skill-gap' },
+18: { label: 'Learning Roadmap', icon: '📚', path: '/roadmap' },
+19: { label: 'Interview Prep', icon: '🎤', path: '/interview' },
+20: { label: 'Industry Insights', icon: '📊', path: '/industry' },
+87: <span className="sidebar-link-icon">🚪</span>
+
+--- components/ErrorAlert.jsx ---
+10: <span>⚠️</span>
+13: <button onClick={onDismiss} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: 'inherit', padding: 0 }}>✕</button>
+
+--- api/client.js ---
+14: // ── Request Interceptor: attach token + debug log ─────────────────────────
+22: // ── Response Interceptor: handle 401 + debug log ─────────────────────────

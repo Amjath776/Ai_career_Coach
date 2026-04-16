@@ -11,7 +11,7 @@ const api = axios.create({
   timeout: 60000, // 60s — Gemini AI can take 20-40 seconds on cold starts
 });
 
-// ── Request Interceptor: attach token + debug log ─────────────────────────
+//  Request Interceptor: attach token + debug log 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('acc_token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
@@ -19,7 +19,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// ── Response Interceptor: handle 401 + debug log ─────────────────────────
+//  Response Interceptor: handle 401 + debug log 
 api.interceptors.response.use(
   (response) => {
     console.log(`[API] <-- ${response.status} ${response.config.url}`);

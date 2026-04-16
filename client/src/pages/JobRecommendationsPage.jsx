@@ -37,7 +37,7 @@ export default function JobRecommendationsPage() {
       const { data } = await api.post('/jobs/generate', filters);
       console.log('[Jobs] Generation succeeded:', data.recommendations?.jobs?.length, 'jobs');
       setRecommendations(data.recommendations);
-      toast.success('Job recommendations updated! 💼');
+      toast.success('Job recommendations updated! ');
     } catch (err) {
       const serverMessage = err.response?.data?.message;
       const isTimeout = err.code === 'ECONNABORTED';
@@ -77,7 +77,7 @@ export default function JobRecommendationsPage() {
         ...prev,
         jobs: prev.jobs.map((j) => j._id === jobId ? { ...j, isApplied: true } : j),
       }));
-      toast.success('Marked as applied! 🎉');
+      toast.success('Marked as applied! ');
     } catch (err) {
       console.error('[Jobs] Mark applied failed:', err.response?.data || err.message);
       toast.error(err.response?.data?.message || 'Action failed');
@@ -93,7 +93,7 @@ export default function JobRecommendationsPage() {
         <Navbar title="Job Recommendations" />
         <div className="page-inner">
           <div className="page-header">
-            <h1>💼 Job Recommendations</h1>
+            <h1> Job Recommendations</h1>
             <p>AI-matched job opportunities based on your skills, experience, and preferences.</p>
           </div>
 
@@ -124,7 +124,7 @@ export default function JobRecommendationsPage() {
                     </select>
                   </div>
                   <button type="submit" className="btn btn-primary" disabled={generating} style={{ height: '42px' }}>
-                    {generating ? '🤖 Generating…' : '🔍 Find Jobs'}
+                    {generating ? ' Generating…' : ' Find Jobs'}
                   </button>
                 </form>
               </div>
@@ -132,7 +132,7 @@ export default function JobRecommendationsPage() {
               {/* Jobs grid */}
               {!recommendations ? (
                 <div className="card" style={{ textAlign: 'center', padding: '4rem' }}>
-                  <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>💼</div>
+                  
                   <h3>No Recommendations Yet</h3>
                   <p style={{ color: 'var(--muted)', marginTop: '0.5rem' }}>Click "Find Jobs" to generate AI-powered job matches for your profile.</p>
                 </div>
@@ -160,7 +160,7 @@ export default function JobRecommendationsPage() {
                             </span>
                           )}
                           {job.source && <span className="badge badge-muted">{job.source}</span>}
-                          {job.isApplied && <span className="badge badge-primary">✓ Applied</span>}
+                          {job.isApplied && <span className="badge badge-primary"> Applied</span>}
                         </div>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem', marginTop: '0.5rem' }}>
                           {job.requiredSkills?.slice(0, 4).map((s) => <span key={s} className="skill-tag">{s}</span>)}
@@ -170,11 +170,11 @@ export default function JobRecommendationsPage() {
                             className={`btn btn-sm ${job.isSaved ? 'btn-accent' : 'btn-outline'}`}
                             onClick={() => handleToggleSave(job._id, job.isSaved)}
                           >
-                            {job.isSaved ? '★ Saved' : '☆ Save'}
+                            {job.isSaved ? ' Saved' : ' Save'}
                           </button>
                           {!job.isApplied && (
                             <button className="btn btn-primary btn-sm" onClick={() => handleApply(job._id)}>
-                              Mark Applied ✓
+                              Mark Applied 
                             </button>
                           )}
                         </div>

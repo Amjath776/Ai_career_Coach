@@ -33,7 +33,7 @@ export default function CareerPathPage() {
       const { data } = await api.post('/career-path/generate', form);
       setPaths((prev) => [data.careerPath, ...prev]);
       setSelected(data.careerPath);
-      toast.success('Career paths generated! 🗺️');
+      toast.success('Career paths generated! ');
     } catch { toast.error('Generation failed'); }
     finally { setGenerating(false); }
   };
@@ -55,7 +55,7 @@ export default function CareerPathPage() {
         <Navbar title="Career Path Recommendations" />
         <div className="page-inner">
           <div className="page-header">
-            <h1>🗺️ Career Path Recommendations</h1>
+            <h1> Career Path Recommendations</h1>
             <p>Visualize your journey to your target role with personalized, AI-generated step-by-step paths.</p>
           </div>
 
@@ -88,7 +88,7 @@ export default function CareerPathPage() {
                     </select>
                   </div>
                   <button type="submit" className="btn btn-primary" disabled={generating} style={{ height: '42px' }}>
-                    {generating ? '🤖 Generating…' : '🗺️ Generate'}
+                    {generating ? ' Generating…' : ' Generate'}
                   </button>
                 </form>
               </div>
@@ -116,18 +116,18 @@ export default function CareerPathPage() {
                     {/* Personality insights */}
                     {selected.personalityInsights?.mbtiAnalysis && (
                       <div className="card">
-                        <div className="card-header"><h3 className="card-title">🧠 Personality Insights {selected.mbtiType && `(${selected.mbtiType})`}</h3></div>
+                        <div className="card-header"><h3 className="card-title"> Personality Insights {selected.mbtiType && `(${selected.mbtiType})`}</h3></div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
                           <div>
                             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1rem' }}>{selected.personalityInsights.mbtiAnalysis}</p>
                             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{selected.personalityInsights.careerAlignment}</p>
                           </div>
                           <div>
-                            <div style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.5rem', color: 'var(--success)' }}>✓ Strengths</div>
+                            <div style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.5rem', color: 'var(--success)' }}> Strengths</div>
                             <ul style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem', marginBottom: '1rem' }}>
                               {selected.personalityInsights.strengths?.map((s) => <li key={s} className="badge badge-success">{s}</li>)}
                             </ul>
-                            <div style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.5rem', color: 'var(--danger)' }}>⚡ Challenges</div>
+                            <div style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.5rem', color: 'var(--danger)' }}> Challenges</div>
                             <ul style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem' }}>
                               {selected.personalityInsights.challenges?.map((c) => <li key={c} className="badge badge-danger">{c}</li>)}
                             </ul>
@@ -146,8 +146,8 @@ export default function CareerPathPage() {
                           </div>
                           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                             <span className={`badge ${difficultyBadge[path.difficulty] || 'badge-muted'}`}>{path.difficulty}</span>
-                            <span className="badge badge-muted">⏱️ {path.timelineYears}y</span>
-                            <span className="badge badge-success">📈 {path.estimatedSalaryGrowth}</span>
+                            <span className="badge badge-muted"> {path.timelineYears}y</span>
+                            <span className="badge badge-success"> {path.estimatedSalaryGrowth}</span>
                           </div>
                         </div>
 
@@ -165,14 +165,14 @@ export default function CareerPathPage() {
                               <div style={{ flex: 1, paddingBottom: '0.5rem' }}>
                                 <div style={{ fontWeight: 700, fontSize: '1rem', marginBottom: '0.25rem' }}>{step.role}</div>
                                 <div style={{ color: 'var(--muted)', fontSize: '0.8125rem', marginBottom: '0.5rem' }}>
-                                  ⏱️ {step.duration} · 💰 ${step.avgSalary?.toLocaleString() || 'N/A'}/yr
+                                   {step.duration} ·  ${step.avgSalary?.toLocaleString() || 'N/A'}/yr
                                 </div>
                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem', marginBottom: '0.5rem' }}>
                                   {step.skills?.map((s) => <span key={s} className="skill-tag">{s}</span>)}
                                 </div>
                                 {step.tips && (
                                   <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', fontStyle: 'italic' }}>
-                                    💡 {step.tips}
+                                     {step.tips}
                                   </div>
                                 )}
                               </div>
@@ -191,7 +191,7 @@ export default function CareerPathPage() {
                   </div>
                 ) : (
                   <div className="card" style={{ textAlign: 'center', padding: '4rem' }}>
-                    <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🗺️</div>
+                    <div style={{ fontSize: '3rem', marginBottom: '1rem' }}></div>
                     <h3>Generate Your Career Path</h3>
                     <p style={{ color: 'var(--muted)', marginTop: '0.5rem' }}>Fill in your current and target roles to get personalized career paths.</p>
                   </div>

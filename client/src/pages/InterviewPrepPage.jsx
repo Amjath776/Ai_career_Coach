@@ -38,7 +38,7 @@ export default function InterviewPrepPage() {
       setCurrentQ(0);
       setAnswer('');
       setShowFeedback({});
-      toast.success('Interview session started! 🎤');
+      toast.success('Interview session started! ');
     } catch { toast.error('Failed to start session'); }
     finally { setStarting(false); }
   };
@@ -61,7 +61,7 @@ export default function InterviewPrepPage() {
       const { data } = await api.put(`/interview/${selected._id}/complete`);
       setSelected(data.session);
       setSessions((prev) => prev.map((s) => s._id === data.session._id ? data.session : s));
-      toast.success('Session completed! Great work 🎉');
+      toast.success('Session completed! Great work ');
     } catch { toast.error('Failed to complete session'); }
   };
 
@@ -75,7 +75,7 @@ export default function InterviewPrepPage() {
         <Navbar title="Interview Preparation" />
         <div className="page-inner">
           <div className="page-header">
-            <h1>🎤 Interview Preparation</h1>
+            <h1> Interview Preparation</h1>
             <p>Practice with AI-generated role-specific questions and get instant feedback on your answers.</p>
           </div>
 
@@ -111,7 +111,7 @@ export default function InterviewPrepPage() {
                     </select>
                   </div>
                   <button type="submit" className="btn btn-primary" disabled={starting} style={{ height: '42px' }}>
-                    {starting ? '⏳ Starting…' : '🎤 Start'}
+                    {starting ? ' Starting…' : ' Start'}
                   </button>
                 </form>
               </div>
@@ -173,7 +173,7 @@ export default function InterviewPrepPage() {
                         {/* Tips */}
                         {q.tips?.length > 0 && (
                           <div style={{ background: '#fef3c7', borderRadius: 'var(--radius)', padding: '0.75rem', marginBottom: '1rem', fontSize: '0.875rem' }}>
-                            💡 <strong>Tips:</strong> {q.tips.join(' · ')}
+                             <strong>Tips:</strong> {q.tips.join(' · ')}
                           </div>
                         )}
 
@@ -193,11 +193,11 @@ export default function InterviewPrepPage() {
                         <div className="answer-actions">
                           {!q.userAnswer ? (
                             <button className="btn btn-primary" onClick={handleSubmitAnswer} disabled={submitting}>
-                              {submitting ? '🤖 Evaluating…' : '🤖 Submit & Get AI Feedback'}
+                              {submitting ? ' Evaluating…' : ' Submit & Get AI Feedback'}
                             </button>
                           ) : (
                             <div className="ai-feedback-box">
-                              <h4>🤖 AI Feedback</h4>
+                              <h4> AI Feedback</h4>
                               <div className="score-display">
                                 Score: <span style={{ color: q.aiScore >= 7 ? 'var(--success)' : q.aiScore >= 5 ? 'var(--accent)' : 'var(--danger)', fontSize: '1.125rem' }}>{q.aiScore}/10</span>
                               </div>
@@ -216,7 +216,7 @@ export default function InterviewPrepPage() {
                               <button className="btn btn-outline btn-sm" onClick={() => { setCurrentQ(currentQ + 1); setAnswer(''); }}>Next →</button>
                             )}
                             {answeredCount === selected.questions.length && !selected.completedAt && (
-                              <button className="btn btn-accent btn-sm" onClick={handleComplete}>Complete Session ✓</button>
+                              <button className="btn btn-accent btn-sm" onClick={handleComplete}>Complete Session </button>
                             )}
                           </div>
                         </div>
@@ -226,7 +226,7 @@ export default function InterviewPrepPage() {
                     {/* Completed session summary */}
                     {selected.completedAt && (
                       <div className="card" style={{ marginTop: '1.25rem' }}>
-                        <div className="card-header"><h3 className="card-title">📋 Session Summary</h3></div>
+                        <div className="card-header"><h3 className="card-title"> Session Summary</h3></div>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', textAlign: 'center', marginBottom: '1.5rem' }}>
                           <div style={{ padding: '1.25rem', background: 'var(--surface)', borderRadius: 'var(--radius)' }}>
                             <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--primary)' }}>{selected.overallScore}</div>
@@ -246,7 +246,7 @@ export default function InterviewPrepPage() {
                   </div>
                 ) : (
                   <div className="card" style={{ textAlign: 'center', padding: '4rem' }}>
-                    <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎤</div>
+                    
                     <h3>Start an Interview Session</h3>
                     <p style={{ color: 'var(--muted)', marginTop: '0.5rem' }}>Fill in the form above to generate interview questions for your target role.</p>
                   </div>

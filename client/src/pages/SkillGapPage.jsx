@@ -48,7 +48,7 @@ export default function SkillGapPage() {
       console.log('[SkillGap] Analysis succeeded:', data.skillGap);
       setAnalyses((prev) => [data.skillGap, ...prev]);
       setSelected(data.skillGap);
-      toast.success('Skill gap analysis complete! 🎯');
+      toast.success('Skill gap analysis complete! ');
     } catch (err) {
       // Extract the most meaningful error message available
       const serverMessage = err.response?.data?.message;
@@ -92,7 +92,7 @@ export default function SkillGapPage() {
         <Navbar title="Skill Gap Analysis" />
         <div className="page-inner">
           <div className="page-header">
-            <h1>🎯 Skill Gap Analysis</h1>
+            <h1> Skill Gap Analysis</h1>
             <p>Discover what skills you're missing for your target role and get a prioritized learning plan.</p>
           </div>
 
@@ -113,7 +113,7 @@ export default function SkillGapPage() {
                       value={form.targetIndustry} onChange={e => setForm(p => ({ ...p, targetIndustry: e.target.value }))} />
                   </div>
                   <button type="submit" className="btn btn-primary" disabled={analyzing} style={{ height: '42px' }}>
-                    {analyzing ? '🤖 Analyzing…' : '🎯 Analyze Gap'}
+                    {analyzing ? ' Analyzing…' : ' Analyze Gap'}
                   </button>
                 </form>
               </div>
@@ -159,14 +159,14 @@ export default function SkillGapPage() {
                             <span className={`badge ${PRIORITY_COLORS[skill.priority] || 'badge-muted'}`}>{skill.priority}</span>
                           </div>
                           <div style={{ fontSize: '0.8125rem', color: 'var(--muted)', marginBottom: '0.5rem' }}>
-                            ⏱️ Est. time: {skill.estimatedLearningTime}
+                             Est. time: {skill.estimatedLearningTime}
                           </div>
                           {skill.resources?.length > 0 && (
                             <div>
                               <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.375rem' }}>Resources:</div>
                               {skill.resources.slice(0, 2).map((r, ri) => (
                                 <div key={ri} style={{ fontSize: '0.8125rem', color: 'var(--info)', marginBottom: '0.2rem' }}>
-                                  📖 {r.url ? <a href={r.url} target="_blank" rel="noreferrer" style={{ color: 'var(--info)' }}>{r.title}</a> : r.title}
+                                   {r.url ? <a href={r.url} target="_blank" rel="noreferrer" style={{ color: 'var(--info)' }}>{r.title}</a> : r.title}
                                   {r.cost && <span style={{ color: 'var(--muted)' }}> ({r.cost})</span>}
                                 </div>
                               ))}
@@ -179,7 +179,7 @@ export default function SkillGapPage() {
 
                   {/* Priority order */}
                   <div className="card" style={{ gridColumn: '1 / -1' }}>
-                    <div className="card-header"><h3 className="card-title">📋 Recommended Learning Order</h3></div>
+                    <div className="card-header"><h3 className="card-title"> Recommended Learning Order</h3></div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                       {selected.prioritizedLearningOrder?.map((skill, i) => (
                         <div key={skill} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', background: 'var(--surface)', borderRadius: 'var(--radius)', fontSize: '0.875rem' }}>
@@ -192,7 +192,7 @@ export default function SkillGapPage() {
                 </div>
               ) : (
                 <div className="card" style={{ textAlign: 'center', padding: '4rem' }}>
-                  <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎯</div>
+                  
                   <h3>No Analysis Yet</h3>
                   <p style={{ color: 'var(--muted)', marginTop: '0.5rem' }}>Enter a target role above to discover your skill gaps.</p>
                 </div>

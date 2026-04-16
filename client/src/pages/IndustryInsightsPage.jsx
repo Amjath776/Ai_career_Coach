@@ -37,7 +37,7 @@ export default function IndustryInsightsPage() {
       const { data } = await api.post('/industry/generate', form);
       setInsights((prev) => [data.insight, ...prev]);
       setSelected(data.insight);
-      toast.success('Industry insights generated! 📊');
+      toast.success('Industry insights generated! ');
     } catch { toast.error('Generation failed'); }
     finally { setGenerating(false); }
   };
@@ -68,7 +68,7 @@ export default function IndustryInsightsPage() {
         <Navbar title="Industry Insights" />
         <div className="page-inner">
           <div className="page-header">
-            <h1>📊 Industry Insights</h1>
+            <h1> Industry Insights</h1>
             <p>Real-time market data, salary benchmarks, top skills, and growth forecasts by industry.</p>
           </div>
 
@@ -94,7 +94,7 @@ export default function IndustryInsightsPage() {
                       value={form.location} onChange={e => setForm(p => ({ ...p, location: e.target.value }))} />
                   </div>
                   <button type="submit" className="btn btn-primary" disabled={generating} style={{ height: '42px' }}>
-                    {generating ? '🤖 Generating…' : '📊 Generate'}
+                    {generating ? ' Generating…' : ' Generate'}
                   </button>
                 </form>
               </div>
@@ -139,7 +139,7 @@ export default function IndustryInsightsPage() {
                       <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7 }}>{selected.marketOverview}</p>
                       {selected.growthOutlook && (
                         <div style={{ marginTop: '1rem', padding: '0.875rem', background: 'var(--success-bg)', borderRadius: 'var(--radius)', fontSize: '0.9rem', color: '#065f46' }}>
-                          📈 <strong>Growth Outlook:</strong> {selected.growthOutlook}
+                           <strong>Growth Outlook:</strong> {selected.growthOutlook}
                         </div>
                       )}
                     </div>
@@ -147,7 +147,7 @@ export default function IndustryInsightsPage() {
                     {/* Salary chart */}
                     {salaryChartData && (
                       <div className="card">
-                        <div className="card-header"><h3 className="card-title">💰 Salary Ranges by Level (USD)</h3></div>
+                        <div className="card-header"><h3 className="card-title"> Salary Ranges by Level (USD)</h3></div>
                         <Bar data={salaryChartData} options={{
                           responsive: true,
                           plugins: { legend: { position: 'bottom' } },
@@ -159,7 +159,7 @@ export default function IndustryInsightsPage() {
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                       {/* Top skills */}
                       <div className="card">
-                        <div className="card-header"><h3 className="card-title">🔥 Top In-Demand Skills</h3></div>
+                        <div className="card-header"><h3 className="card-title"> Top In-Demand Skills</h3></div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                           {selected.topSkills?.map((s, i) => (
                             <div key={i}>
@@ -181,7 +181,7 @@ export default function IndustryInsightsPage() {
                       {/* Certifications + companies */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                         <div className="card">
-                          <div className="card-header"><h3 className="card-title">🏆 Top Certifications</h3></div>
+                          <div className="card-header"><h3 className="card-title"> Top Certifications</h3></div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                             {selected.topCertifications?.map((c, i) => (
                               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', fontSize: '0.875rem' }}>
@@ -191,7 +191,7 @@ export default function IndustryInsightsPage() {
                           </div>
                         </div>
                         <div className="card">
-                          <div className="card-header"><h3 className="card-title">🏢 Top Companies</h3></div>
+                          <div className="card-header"><h3 className="card-title"> Top Companies</h3></div>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                             {selected.topCompanies?.map((c) => <span key={c} className="badge badge-muted">{c}</span>)}
                           </div>
@@ -202,11 +202,11 @@ export default function IndustryInsightsPage() {
                     {/* Work trends */}
                     {selected.workTrends?.length > 0 && (
                       <div className="card">
-                        <div className="card-header"><h3 className="card-title">🌐 Work Trends</h3></div>
+                        <div className="card-header"><h3 className="card-title"> Work Trends</h3></div>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
                           {selected.workTrends.map((t, i) => (
                             <div key={i} style={{ padding: '0.625rem 1rem', background: 'var(--surface)', borderRadius: 'var(--radius)', fontSize: '0.875rem', border: '1px solid var(--card-border)' }}>
-                              ✦ {t}
+                               {t}
                             </div>
                           ))}
                         </div>
@@ -216,7 +216,7 @@ export default function IndustryInsightsPage() {
                     {/* Recommended training */}
                     {selected.recommendedTraining?.length > 0 && (
                       <div className="card">
-                        <div className="card-header"><h3 className="card-title">📚 Recommended Training</h3></div>
+                        <div className="card-header"><h3 className="card-title"> Recommended Training</h3></div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                           {selected.recommendedTraining.map((t, i) => (
                             <div key={i} style={{ padding: '1rem', border: '1px solid var(--card-border)', borderRadius: 'var(--radius)' }}>
@@ -233,7 +233,7 @@ export default function IndustryInsightsPage() {
                   </div>
                 ) : (
                   <div className="card" style={{ textAlign: 'center', padding: '4rem' }}>
-                    <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📊</div>
+                    
                     <h3>Generate Industry Insights</h3>
                     <p style={{ color: 'var(--muted)', marginTop: '0.5rem' }}>Enter an industry name above to get market data, salary benchmarks, and trend analysis.</p>
                   </div>

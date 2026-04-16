@@ -43,7 +43,7 @@ export default function LearningRoadmapPage() {
       console.log('[Roadmap] Created:', data.roadmap?._id, `(${data.roadmap?.phases?.length} phases)`);
       setRoadmaps((prev) => [data.roadmap, ...prev]);
       setSelected(data.roadmap);
-      toast.success('Learning roadmap created! 📚');
+      toast.success('Learning roadmap created! ');
     } catch (err) {
       const serverMessage = err.response?.data?.message;
       const isTimeout = err.code === 'ECONNABORTED';
@@ -70,7 +70,7 @@ export default function LearningRoadmapPage() {
       });
       setSelected(data.roadmap);
       setRoadmaps((prev) => prev.map((r) => r._id === data.roadmap._id ? data.roadmap : r));
-      toast.success(completed ? 'Phase completed! 🎉' : 'Phase marked incomplete');
+      toast.success(completed ? 'Phase completed! ' : 'Phase marked incomplete');
     } catch (err) {
       console.error('[Roadmap] Phase update failed:', err.response?.data || err.message);
       toast.error(err.response?.data?.message || 'Update failed');
@@ -97,7 +97,7 @@ export default function LearningRoadmapPage() {
         <Navbar title="Learning Roadmap" />
         <div className="page-inner">
           <div className="page-header">
-            <h1>📚 Learning Roadmap</h1>
+            <h1> Learning Roadmap</h1>
             <p>AI-generated structured learning plans with monthly milestones and project suggestions.</p>
           </div>
 
@@ -124,7 +124,7 @@ export default function LearningRoadmapPage() {
                     </select>
                   </div>
                   <button type="submit" className="btn btn-primary" disabled={generating} style={{ height: '42px' }}>
-                    {generating ? '🤖 Generating…' : '📚 Create'}
+                    {generating ? ' Generating…' : ' Create'}
                   </button>
                 </form>
               </div>
@@ -180,7 +180,7 @@ export default function LearningRoadmapPage() {
                           onClick={() => setExpandedPhase(expandedPhase === phase.month ? null : phase.month)}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
-                            <div className={`phase-number ${phase.completed ? 'done' : ''}`}>{phase.completed ? '✓' : phase.month}</div>
+                            <div className={`phase-number ${phase.completed ? 'done' : ''}`}>{phase.completed ? '' : phase.month}</div>
                             <div>
                               <div style={{ fontWeight: 600 }}>{phase.title}</div>
                               <div style={{ fontSize: '0.8125rem', color: 'var(--muted)' }}>{phase.focus}</div>
@@ -194,7 +194,7 @@ export default function LearningRoadmapPage() {
                               style={{ width: 18, height: 18, accentColor: 'var(--success)', cursor: 'pointer' }}
                               onClick={e => e.stopPropagation()}
                             />
-                            <span style={{ fontSize: '0.8125rem', color: 'var(--muted)' }}>{expandedPhase === phase.month ? '▲' : '▼'}</span>
+                            <span style={{ fontSize: '0.8125rem', color: 'var(--muted)' }}>{expandedPhase === phase.month ? '' : ''}</span>
                           </div>
                         </div>
 
@@ -202,24 +202,24 @@ export default function LearningRoadmapPage() {
                           <div className="roadmap-phase-body">
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                               <div>
-                                <div style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.5rem' }}>📖 Topics</div>
+                                <div style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.5rem' }}> Topics</div>
                                 <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                                   {phase.topics?.map((t, i) => <li key={i} style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>• {t}</li>)}
                                 </ul>
-                                <div style={{ fontWeight: 600, fontSize: '0.875rem', marginTop: '1rem', marginBottom: '0.5rem' }}>🏆 Milestones</div>
+                                <div style={{ fontWeight: 600, fontSize: '0.875rem', marginTop: '1rem', marginBottom: '0.5rem' }}> Milestones</div>
                                 <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                                  {phase.milestones?.map((m, i) => <li key={i} style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>✓ {m}</li>)}
+                                  {phase.milestones?.map((m, i) => <li key={i} style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}> {m}</li>)}
                                 </ul>
                               </div>
                               <div>
-                                <div style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.5rem' }}>🔗 Resources</div>
+                                <div style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '0.5rem' }}> Resources</div>
                                 {phase.resources?.map((r, i) => (
                                   <div key={i} style={{ fontSize: '0.8125rem', marginBottom: '0.375rem', padding: '0.5rem', background: 'var(--surface)', borderRadius: 'var(--radius)' }}>
                                     <div style={{ fontWeight: 500 }}>{r.title}</div>
                                     <div style={{ color: 'var(--muted)' }}>{r.type} · {r.estimatedHours}h</div>
                                   </div>
                                 ))}
-                                <div style={{ fontWeight: 600, fontSize: '0.875rem', marginTop: '1rem', marginBottom: '0.5rem' }}>💻 Projects</div>
+                                <div style={{ fontWeight: 600, fontSize: '0.875rem', marginTop: '1rem', marginBottom: '0.5rem' }}> Projects</div>
                                 {phase.projects?.map((p, i) => (
                                   <div key={i} style={{ fontSize: '0.8125rem', padding: '0.5rem', background: '#fef3c7', borderRadius: 'var(--radius)', marginBottom: '0.375rem' }}>
                                     <div style={{ fontWeight: 500 }}>{p.title}</div>
@@ -235,7 +235,7 @@ export default function LearningRoadmapPage() {
                   </div>
                 ) : (
                   <div className="card" style={{ textAlign: 'center', padding: '4rem' }}>
-                    <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📚</div>
+                    
                     <h3>Create Your First Roadmap</h3>
                     <p style={{ color: 'var(--muted)', marginTop: '0.5rem' }}>Enter a learning goal above to generate a structured monthly plan.</p>
                   </div>

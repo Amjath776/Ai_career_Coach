@@ -7,15 +7,15 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const FEATURES = [
-  { icon: '📄', title: 'AI Resume Analysis', desc: 'Get detailed feedback on your resume with ATS optimization, action verb suggestions, and a professional score.' },
-  { icon: '✉️', title: 'Cover Letter Generator', desc: 'Generate tailored, role-specific cover letters in seconds with customizable tone and highlights.' },
-  { icon: '💼', title: 'Smart Job Matching', desc: 'Discover jobs that match your skills and preferences with AI-powered match scoring.' },
-  { icon: '🗺️', title: 'Career Path Planning', desc: 'Visualize your journey from current role to dream job with step-by-step roadmaps.' },
-  { icon: '🎯', title: 'Skill Gap Analysis', desc: 'Identify missing skills for your target role with prioritized learning resources and timelines.' },
-  { icon: '📚', title: 'Learning Roadmaps', desc: 'Follow structured monthly plans with curated resources, projects, and milestone tracking.' },
-  { icon: '🎤', title: 'Interview Preparation', desc: 'Practice with role-specific questions and get instant AI feedback on your answers.' },
-  { icon: '📊', title: 'Industry Insights', desc: 'Access real-time salary data, top skills, market trends, and growth forecasts by industry.' },
-  { icon: '🧠', title: 'Personality Analysis', desc: 'Discover career paths aligned with your Myers-Briggs personality type and work preferences.' },
+  { icon: '', title: 'AI Resume Analysis', desc: 'Get detailed feedback on your resume with ATS optimization, action verb suggestions, and a professional score.' },
+  { icon: '', title: 'Cover Letter Generator', desc: 'Generate tailored, role-specific cover letters in seconds with customizable tone and highlights.' },
+  { icon: '', title: 'Smart Job Matching', desc: 'Discover jobs that match your skills and preferences with AI-powered match scoring.' },
+  { icon: '', title: 'Career Path Planning', desc: 'Visualize your journey from current role to dream job with step-by-step roadmaps.' },
+  { icon: '', title: 'Skill Gap Analysis', desc: 'Identify missing skills for your target role with prioritized learning resources and timelines.' },
+  { icon: '', title: 'Learning Roadmaps', desc: 'Follow structured monthly plans with curated resources, projects, and milestone tracking.' },
+  { icon: '', title: 'Interview Preparation', desc: 'Practice with role-specific questions and get instant AI feedback on your answers.' },
+  { icon: '', title: 'Industry Insights', desc: 'Access real-time salary data, top skills, market trends, and growth forecasts by industry.' },
+  { icon: '', title: 'Personality Analysis', desc: 'Discover career paths aligned with your Myers-Briggs personality type and work preferences.' },
 ];
 
 const STATS = [
@@ -32,7 +32,7 @@ export default function LandingPage() {
       <nav className="landing-nav">
         <div className="landing-nav-inner">
           <div className="landing-nav-logo">
-            <div className="landing-nav-logo-icon" style={{ fontSize: '1.25rem' }}>🚀</div>
+            <div className="landing-nav-logo-icon" style={{ fontSize: '1.25rem' }}></div>
             AI Career <span>Coach</span>
           </div>
           <div className="landing-nav-links">
@@ -76,7 +76,7 @@ export default function LandingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
             {FEATURES.map((f) => (
               <div key={f.title} className="feature-card">
-                <div className="feature-icon">{f.icon}</div>
+                {f.icon && <div className="feature-icon">{f.icon}</div>}
                 <h3>{f.title}</h3>
                 <p>{f.desc}</p>
               </div>

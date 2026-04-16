@@ -22,7 +22,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(email, password);
-      toast.success('Welcome back! 👋');
+      toast.success('Welcome back! ');
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
@@ -36,7 +36,7 @@ export default function LoginPage() {
       <div className="auth-card fade-in-up">
         {/* Logo */}
         <div className="auth-logo">
-          <div className="auth-logo-icon">🚀</div>
+          <div className="auth-logo-icon"></div>
           AI Career <span>Coach</span>
         </div>
 

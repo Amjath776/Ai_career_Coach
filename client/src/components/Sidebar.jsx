@@ -7,17 +7,17 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const NAV_ITEMS = [
-  { label: 'Dashboard', icon: '🏠', path: '/dashboard' },
+  { label: 'Dashboard', icon: '', path: '/dashboard' },
 ];
 const AI_TOOLS = [
-  { label: 'Resume Builder', icon: '📄', path: '/resume' },
-  { label: 'Cover Letter', icon: '✉️', path: '/cover-letter' },
-  { label: 'Job Recommendations', icon: '💼', path: '/jobs' },
-  { label: 'Career Path', icon: '🗺️', path: '/career-path' },
-  { label: 'Skill Gap Analysis', icon: '🎯', path: '/skill-gap' },
-  { label: 'Learning Roadmap', icon: '📚', path: '/roadmap' },
-  { label: 'Interview Prep', icon: '🎤', path: '/interview' },
-  { label: 'Industry Insights', icon: '📊', path: '/industry' },
+  { label: 'Resume Builder', icon: '', path: '/resume' },
+  { label: 'Cover Letter', icon: '', path: '/cover-letter' },
+  { label: 'Job Recommendations', icon: '', path: '/jobs' },
+  { label: 'Career Path', icon: '', path: '/career-path' },
+  { label: 'Skill Gap Analysis', icon: '', path: '/skill-gap' },
+  { label: 'Learning Roadmap', icon: '', path: '/roadmap' },
+  { label: 'Interview Prep', icon: '', path: '/interview' },
+  { label: 'Industry Insights', icon: '', path: '/industry' },
 ];
 
 export default function Sidebar() {
@@ -34,12 +34,8 @@ export default function Sidebar() {
 
   return (
     <aside className="sidebar">
-      {/* Logo */}
-      <div className="sidebar-logo">
-        <div className="sidebar-logo-icon">🚀</div>
-        <div>
-          <div className="sidebar-logo-text">AI Career <span>Coach</span></div>
-        </div>
+      {/* Logo */}      <div className="sidebar-logo">
+        <div className="sidebar-logo-text">AI Career <span>Coach</span></div>
       </div>
 
       {/* Navigation */}
@@ -51,7 +47,7 @@ export default function Sidebar() {
               to={item.path}
               className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
             >
-              <span className="sidebar-link-icon">{item.icon}</span>
+              {item.icon && <span className="sidebar-link-icon">{item.icon}</span>}
               {item.label}
             </NavLink>
           ))}
@@ -65,7 +61,7 @@ export default function Sidebar() {
               to={item.path}
               className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
             >
-              <span className="sidebar-link-icon">{item.icon}</span>
+              {item.icon && <span className="sidebar-link-icon">{item.icon}</span>}
               {item.label}
             </NavLink>
           ))}
@@ -84,7 +80,7 @@ export default function Sidebar() {
           </div>
         </div>
         <button className="sidebar-link" onClick={handleLogout} style={{ width: '100%', color: '#fca5a5' }}>
-          <span className="sidebar-link-icon">🚪</span>
+          
           Sign Out
         </button>
       </div>
