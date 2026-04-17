@@ -27,9 +27,6 @@ const industryRoutes = require('./routes/industry');
 // ── Initialize App ────────────────────────────────────────────────────────────
 const app = express();
 
-// ── Connect to MongoDB ────────────────────────────────────────────────────────
-connectDB();
-
 // ── CORS ──────────────────────────────────────────────────────────────────────
 const allowedOrigins = [
   'https://ai-career-coach-bice.vercel.app',
@@ -37,32 +34,48 @@ const allowedOrigins = [
   'http://localhost:3000',
 ];
 
-// Also add any origin from env
+// Also add any origin from env (trim in case of whitespace in .env)
 if (process.env.CLIENT_URL) {
-  allowedOrigins.push(process.env.CLIENT_URL);
+  allowedOrigins.push(process.env.CLIENT_URL.trim());
 }
 
-app.use(cors({
+// Named options object — reused for both the main middleware AND the
+// preflight handler so OPTIONS requests obey the same allow-list.
+const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, Postman)
+    // Allow requests with no origin (mobile apps, curl, Postman, server-to-server)
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
-    // Allow any vercel.app subdomain (covers preview deployments)
+    // Allow any *.vercel.app subdomain (covers preview deployments)
     if (origin.endsWith('.vercel.app')) return callback(null, true);
     return callback(new Error(`CORS: origin ${origin} not allowed`));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+};
 
-// Handle preflight requests for all routes
-app.options('*', cors());
+// Enable pre-flight for all routes — MUST use same options as the main middleware
+app.options('*', cors(corsOptions));
+app.use(cors(corsOptions));
 
 // ── Core Middleware ───────────────────────────────────────────────────────────
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+
+// ── DB Connection Middleware (serverless-safe) ────────────────────────────────
+// connectDB() is cached — this is a no-op on warm serverless invocations.
+// We skip it for the health-check route to avoid a DB round-trip on pings.
+app.use(async (req, res, next) => {
+  if (req.path === '/api/health') return next();
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(503).json({ message: 'Database unavailable. Please try again later.' });
+  }
+});
 
 // ── Health Check ──────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
