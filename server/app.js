@@ -30,22 +30,36 @@ const app = express();
 // ── Connect to MongoDB ────────────────────────────────────────────────────────
 connectDB();
 
-// ── Core Middleware ───────────────────────────────────────────────────────────
+// ── CORS ──────────────────────────────────────────────────────────────────────
 const allowedOrigins = [
-  process.env.CLIENT_URL,
   'https://ai-career-coach-bice.vercel.app',
   'http://localhost:5173',
-].filter(Boolean);
+  'http://localhost:3000',
+];
+
+// Also add any origin from env
+if (process.env.CLIENT_URL) {
+  allowedOrigins.push(process.env.CLIENT_URL);
+}
 
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    return callback(new Error(`CORS policy does not allow access from ${origin}`));
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    // Allow any vercel.app subdomain (covers preview deployments)
+    if (origin.endsWith('.vercel.app')) return callback(null, true);
+    return callback(new Error(`CORS: origin ${origin} not allowed`));
   },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+// Handle preflight requests for all routes
+app.options('*', cors());
+
+// ── Core Middleware ───────────────────────────────────────────────────────────
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
@@ -75,4 +89,4 @@ app.use((req, res) => {
 // ── Global Error Handler ──────────────────────────────────────────────────────
 app.use(errorHandler);
 
-module.exports = app; // exported for testing
+module.exports = app;
