@@ -36,7 +36,6 @@ export default function SignupPage() {
     <div className="auth-root">
       <div className="auth-card fade-in-up" style={{ maxWidth: 520 }}>
         <div className="auth-logo">
-          <div className="auth-logo-icon"></div>
           AI Career <span>Coach</span>
         </div>
 

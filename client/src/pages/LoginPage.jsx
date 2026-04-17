@@ -36,7 +36,6 @@ export default function LoginPage() {
       <div className="auth-card fade-in-up">
         {/* Logo */}
         <div className="auth-logo">
-          <div className="auth-logo-icon"></div>
           AI Career <span>Coach</span>
         </div>
 
