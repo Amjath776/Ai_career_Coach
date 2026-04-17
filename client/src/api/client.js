@@ -1,14 +1,19 @@
 /**
  * Axios API Client
  * Attaches JWT token to all requests automatically.
+ * Uses VITE_API_URL env var in production, falls back to /api for local dev proxy.
  */
 
 import axios from 'axios';
 
+const isDev = import.meta.env.MODE === 'development';
+
 const api = axios.create({
-  baseURL: '/api',
+  // Use the env var if provided, otherwise default to /api
+  // In development, this will use the Vite proxy defined in vite.config.js
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   headers: { 'Content-Type': 'application/json' },
-  timeout: 60000, // 60s — Gemini AI can take 20-40 seconds on cold starts
+  timeout: 60000,
 });
 
 //  Request Interceptor: attach token + debug log 
@@ -36,4 +41,3 @@ api.interceptors.response.use(
 );
 
 export default api;
-
