@@ -19,10 +19,10 @@ const initGemini = () => {
   try {
     genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    console.log('✅ Gemini AI initialized');
+    console.log('✅ Gemini AI initialized successfully');
     return true;
   } catch (err) {
-    console.error('❌ Failed to initialize Gemini:', err.message);
+    console.error('❌ Failed to initialize Gemini Connection:', err.message);
     return false;
   }
 };
@@ -31,9 +31,14 @@ initGemini();
 
 // ── Core generation function ──────────────────────────────────────────────────
 const generateContent = async (prompt) => {
-  if (!model) throw new Error('Gemini AI not initialized');
-  const result = await model.generateContent(prompt);
-  return result.response.text();
+  if (!model) throw new Error('Gemini AI not initialized. Check your API key in .env');
+  try {
+    const result = await model.generateContent(prompt);
+    return result.response.text();
+  } catch (err) {
+    console.error(`[Gemini ERROR] Generation failed: ${err.message}`);
+    throw err;
+  }
 };
 
 // ── Parse JSON from AI response ───────────────────────────────────────────────
@@ -305,20 +310,26 @@ const generateLearningRoadmap = async ({ goal, targetRole, currentSkills, durati
   try {
     console.log(`[Gemini] generateLearningRoadmap called: goal="${goal}", months=${durationMonths}`);
     const prompt = `
-Create a ${durationMonths}-month learning roadmap for: "${goal}"
-Target Role: ${targetRole}
-Current Skills: ${currentSkills.join(', ')}
+Create a highly detailed ${durationMonths}-month learning roadmap for a student aiming for this goal: "${goal}"
+Target Role: ${targetRole || 'Professional'}
+Current Skills: ${currentSkills.join(', ') || 'Beginner'}
 
-Return JSON:
+Provide a structured learning path with specific, real-world topics, credible online course names (as examples), and concrete portfolio project ideas.
+
+Return a JSON object with this exact structure:
 {
   "phases": [{
     "month": 1,
-    "title": "Phase Title",
-    "focus": "What to focus on",
-    "topics": [],
-    "resources": [{ "title": "Name", "type": "course", "url": "https://...", "estimatedHours": 20 }],
-    "projects": [{ "title": "Project Name", "description": "What to build", "skills": [] }],
-    "milestones": []
+    "title": "Phase Title (e.g., Foundations of JavaScript)",
+    "focus": "Practical overview of the month's objective",
+    "topics": ["Specific Topic (e.g., Asynchronous JS)", "Specific Topic (e.g., DOM Manipulation)"],
+    "resources": [
+      { "title": "Specific Course Name (e.g., The Complete JavaScript Course 2024)", "type": "course", "url": "https://...", "estimatedHours": 20 }
+    ],
+    "projects": [
+      { "title": "Practical Project (e.g., Weather Dashboard)", "description": "Specific project details...", "skills": ["Skill 1", "Skill 2"] }
+    ],
+    "milestones": ["Clear milestone (e.g., Build and deploy a weather app)"]
   }]
 }`;
     const text = await generateContent(prompt);
@@ -332,17 +343,88 @@ Return JSON:
   }
 };
 
-const getFallbackRoadmap = (goal, durationMonths) => ({
-  phases: Array.from({ length: Math.min(durationMonths, 6) }, (_, i) => ({
-    month: i + 1,
-    title: `Month ${i + 1}: ${['Foundations', 'Core Skills', 'Applied Practice', 'Advanced Topics', 'Projects', 'Job Readiness'][i]}`,
-    focus: ['Build fundamental knowledge', 'Develop core competencies', 'Apply skills in real scenarios', 'Deepen advanced concepts', 'Build portfolio projects', 'Prepare for the job market'][i],
-    topics: ['Topic 1', 'Topic 2', 'Topic 3'],
-    resources: [{ title: 'Recommended Course', type: 'course', url: 'https://coursera.org', estimatedHours: 40 }],
-    projects: [{ title: `Month ${i + 1} Project`, description: 'Practice project to reinforce learning', skills: ['Core Skill'] }],
-    milestones: [`Complete Month ${i + 1} modules`, 'Pass assessment quiz'],
-  })),
-});
+const getFallbackRoadmap = (goal, durationMonths) => {
+  const g = (goal || '').toLowerCase();
+  let phases = [];
+  
+  if (g.includes('entrepreneur') || g.includes('business') || g.includes('startup')) {
+    phases = [
+      { 
+        month: 1, 
+        title: 'Month 1: Market Research', 
+        focus: 'Validate your idea and identify competitors', 
+        topics: ['Customer Interviews', 'Lean Canvas', 'Competitive Analysis'], 
+        resources: [{ title: 'The Lean Startup', type: 'book/course', url: 'https://steveblank.com', estimatedHours: 20 }], 
+        projects: [{ title: 'Value Proposition Canvas', description: 'Define the core value of your product.', skills: ['Research', 'Strategy'] }], 
+        milestones: ['Validated Problem Statement'] 
+      },
+      { 
+        month: 2, 
+        title: 'Month 2: MVP Design', 
+        focus: 'Build a minimum viable product', 
+        topics: ['No-code Tools', 'Prototyping', 'User Flows'], 
+        resources: [{ title: 'Build and Launch with Webflow', type: 'course', url: 'https://webflow.com/university', estimatedHours: 30 }], 
+        projects: [{ title: 'Landing Page Prototype', description: 'Build a high-fidelity prototype of your key feature.', skills: ['Design', 'UX'] }], 
+        milestones: ['Completed Static Prototype'] 
+      },
+      { 
+        month: 3, 
+        title: 'Month 3: Sales & Growth', 
+        focus: 'Acquire your first customers', 
+        topics: ['B2B Sales', 'Content Marketing', 'Analytics'], 
+        resources: [{ title: 'Growth Marketing 101', type: 'course', url: 'https://hubspot.com', estimatedHours: 40 }], 
+        projects: [{ title: 'Cold Outreach Campaign', description: 'Reach out to 50 potential customers.', skills: ['Sales', 'Communication'] }], 
+        milestones: ['First 10 Waitlist Signups'] 
+      }
+    ];
+  } else if (g.includes('data') || g.includes('python') || g.includes('analy')) {
+    phases = [
+      { 
+        month: 1, 
+        title: 'Month 1: Python for Data', 
+        focus: 'Master Python fundamentals', 
+        topics: ['NumPy', 'Pandas', 'Jupyter Notebooks'], 
+        resources: [{ title: 'Python for Data Science', type: 'course', url: 'https://coursera.org', estimatedHours: 40 }], 
+        projects: [{ title: 'Exploratory Data Analysis', description: 'Analyze a dataset from Kaggle.', skills: ['Python', 'Pandas'] }], 
+        milestones: ['Complete 5 EDA notebooks'] 
+      }
+    ];
+  } else {
+    phases = [
+      {
+        month: 1,
+        title: `Month 1: ${goal} Foundations`,
+        focus: `Master the fundamental concepts of ${goal}`,
+        topics: ['Introduction & Core Principles', 'Industry Overview', 'Basic Tools & Frameworks'],
+        resources: [{ title: 'Introductory Course', type: 'online course', url: 'https://learning.com', estimatedHours: 20 }],
+        projects: [{ title: 'Beginner Project', description: `A small project to practice ${goal} basics.`, skills: ['Foundations'] }],
+        milestones: ['Understand core terminology'],
+      },
+      {
+        month: 2,
+        title: `Month 2: Core ${goal} Skills`,
+        focus: 'Develop technical competencies and practical knowledge',
+        topics: ['Advanced Techniques', 'Standard Procedures', 'Technical Workflows'],
+        resources: [{ title: 'Technical Mastery', type: 'course', url: 'https://learning.com', estimatedHours: 35 }],
+        projects: [{ title: 'Technical Project', description: `Apply core ${goal} techniques in a real scenario.`, skills: ['Technical'] }],
+        milestones: ['Complete technical assessment'],
+      },
+      {
+        month: 3,
+        title: `Month 3: Advanced ${goal} Practice`,
+        focus: 'Deep dive into complex topics and real-world application',
+        topics: ['Complex Problem Solving', 'Case Studies', 'Advanced Applications'],
+        resources: [{ title: 'Advanced Workshop', type: 'workshop', url: 'https://learning.com', estimatedHours: 40 }],
+        projects: [{ title: 'Capstone Project', description: `A comprehensive final project demonstrating ${goal} expertise.`, skills: ['Expertise', 'Problem Solving'] }],
+        milestones: ['Complete complex case study'],
+      }
+    ];
+  }
+
+  return {
+    phases: phases.slice(0, Math.min(durationMonths, 6))
+  };
+};
 
 // ──────────────────────────────────────────────────────────────────────────────
 // INTERVIEW QUESTIONS & FEEDBACK
