@@ -156,7 +156,7 @@ export default function JobRecommendationsPage() {
                           <span className="badge badge-muted">{job.type}</span>
                           {job.salary?.min && (
                             <span className="badge badge-success">
-                              ₹{job.salary.min.toLocaleString()}–₹{job.salary.max.toLocaleString()}
+                              ₹{Number(job.salary.min).toLocaleString('en-IN')}–₹{Number(job.salary.max).toLocaleString('en-IN')}
                             </span>
                           )}
                           {job.source && <span className="badge badge-muted">{job.source}</span>}

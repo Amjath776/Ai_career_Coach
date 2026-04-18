@@ -165,7 +165,7 @@ export default function CareerPathPage() {
                               <div style={{ flex: 1, paddingBottom: '0.5rem' }}>
                                 <div style={{ fontWeight: 700, fontSize: '1rem', marginBottom: '0.25rem' }}>{step.role}</div>
                                 <div style={{ color: 'var(--muted)', fontSize: '0.8125rem', marginBottom: '0.5rem' }}>
-                                   {step.duration} · ₹{step.avgSalary?.toLocaleString() || 'N/A'}/yr
+                                   {step.duration} · {step.avgSalary || 'N/A'}/yr
                                 </div>
                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem', marginBottom: '0.5rem' }}>
                                   {step.skills?.map((s) => <span key={s} className="skill-tag">{s}</span>)}

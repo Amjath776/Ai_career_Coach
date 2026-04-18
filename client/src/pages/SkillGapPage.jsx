@@ -177,18 +177,7 @@ export default function SkillGapPage() {
                     </div>
                   </div>
 
-                  {/* Priority order */}
-                  <div className="card" style={{ gridColumn: '1 / -1' }}>
-                    <div className="card-header"><h3 className="card-title"> Recommended Learning Order</h3></div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                      {selected.prioritizedLearningOrder?.map((skill, i) => (
-                        <div key={skill} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', background: 'var(--surface)', borderRadius: 'var(--radius)', fontSize: '0.875rem' }}>
-                          <span style={{ width: 24, height: 24, background: 'var(--primary)', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 700 }}>{i + 1}</span>
-                          {skill}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+
                 </div>
               ) : (
                 <div className="card" style={{ textAlign: 'center', padding: '4rem' }}>

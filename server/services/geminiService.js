@@ -327,7 +327,8 @@ STRICT RULES:
 - Companies should be realistic and varied (MNCs, startups, mid-size).
 - matchScore must reflect actual skill alignment — NOT a random number.
 - Do NOT repeat job titles or companies.
-- Salaries must be realistic for the industry and location.
+- Salaries must be realistic for the industry. Generate amounts in Indian Rupees (INR).
+- min and max salary MUST be pure numbers, do not use strings like "$100k".
 
 Professional Profile:
   Current Role : ${currentTitle}
@@ -341,7 +342,7 @@ Return a JSON array (8 items) — no extra text:
   "company": "Company Name",
   "location": "City, Country",
   "type": "full-time|part-time|contract|remote",
-  "salary": { "min": 70000, "max": 100000, "currency": "USD" },
+  "salary": { "min": 800000, "max": 1200000, "currency": "INR" },
   "description": "3-sentence role description specific to the candidate",
   "requiredSkills": ["2-4 skills from the candidate's profile"],
   "matchScore": <number 70-98>,
@@ -392,7 +393,7 @@ const getDynamicJobRecommendations = ({ skills = [], currentTitle = '', industry
 
   return shuffle(titles).slice(0, 8).map((title, i) => {
     const usedSkills = shuffle(skills).slice(0, Math.min(3, skills.length));
-    const salary     = { min: jitter(baseSalary, 10000), max: jitter(baseSalary * 1.3, 10000), currency: 'USD' };
+    const salary     = { min: jitter(baseSalary * 80, 500000), max: jitter(baseSalary * 110, 500000), currency: 'INR' };
     const match      = jitter(75 + (i === 0 ? 15 : 0), 7);
 
     return {
@@ -427,7 +428,7 @@ STRICT RULES:
 - Generate 2 DISTINCT career path options from "${currentRole}" to "${targetRole}".
 - Each path must have different timelines, step sequences, and philosophies.
 - Steps must reflect skills the user ALREADY has AND skills they need to build.
-- Salary figures must be realistic for the transition described.
+- Salary figures must be realistic for the transition described. Use Indian Rupees (INR) and format the string with the ₹ symbol, e.g., "₹12,00,000".
 - MBTI insights must be specific to the given type (${mbtiType || 'unknown'}).
 - Do NOT return identical paths with different titles.
 
@@ -451,7 +452,7 @@ Return ONLY valid JSON:
       "duration": "X months",
       "skills": ["skill1"],
       "responsibilities": ["responsibility1"],
-      "avgSalary": <number>,
+      "avgSalary": "₹12,00,000",
       "tips": "Specific actionable tip"
     }],
     "requiredSkills": ["skill1"],
@@ -518,6 +519,8 @@ const getDynamicCareerPaths = ({ currentRole, targetRole, skills = [], yearsOfEx
   const path1Skills = data ? shuffle(data.skills).slice(0, 3) : shuffle(skills.concat(['System Design', 'Leadership'])).slice(0, 3);
   const path2Skills = data ? shuffle(data.skills).slice(2, 5) : shuffle(skills.concat(['Communication', 'Strategy'])).slice(0, 3);
 
+  const toINR = (usd) => '₹' + (usd * 83).toLocaleString('en-IN');
+
   return {
     paths: [
       {
@@ -525,9 +528,9 @@ const getDynamicCareerPaths = ({ currentRole, targetRole, skills = [], yearsOfEx
         description: `A fast-paced path from ${currentRole} to ${targetRole} focusing on deep technical expertise and hands-on contribution. Best for engineers who want to stay close to the code while growing their impact.`,
         timelineYears: gap,
         steps: [
-          { step: 1, role: data?.intermediate[0] || `Mid-level ${currentRole}`, duration: '8-12 months', skills: path1Skills.slice(0, 2), responsibilities: ['Own feature development end-to-end', 'Contribute to architecture decisions', 'Mentor incoming engineers'], avgSalary: jitter(salaries[0], 8000), tips: `Focus on building depth in ${path1Skills[0] || 'your core stack'} — nothing accelerates promotions faster than being the undisputed expert in one area.` },
-          { step: 2, role: data?.senior[0] || `Senior ${currentRole}`, duration: '10-14 months', skills: path1Skills, responsibilities: ['Lead technical design', 'Drive team velocity improvements', 'Own component reliability'], avgSalary: jitter(salaries[1], 8000), tips: 'Start writing design documents and sharing them publicly in your org — visibility compounds faster than any single project.' },
-          { step: 3, role: targetRole, duration: 'Ongoing', skills: ['Technical Strategy', 'Cross-team Influence'], responsibilities: ['Set engineering direction', 'Drive org-wide technical standards', 'Hire and grow the team'], avgSalary: jitter(salaries[2], 10000), tips: 'Sponsor two junior engineers actively — your leadership reputation is built on other people\'s success, not just your own.' },
+          { step: 1, role: data?.intermediate[0] || `Mid-level ${currentRole}`, duration: '8-12 months', skills: path1Skills.slice(0, 2), responsibilities: ['Own feature development end-to-end', 'Contribute to architecture decisions', 'Mentor incoming engineers'], avgSalary: toINR(jitter(salaries[0], 8000)), tips: `Focus on building depth in ${path1Skills[0] || 'your core stack'} — nothing accelerates promotions faster than being the undisputed expert in one area.` },
+          { step: 2, role: data?.senior[0] || `Senior ${currentRole}`, duration: '10-14 months', skills: path1Skills, responsibilities: ['Lead technical design', 'Drive team velocity improvements', 'Own component reliability'], avgSalary: toINR(jitter(salaries[1], 8000)), tips: 'Start writing design documents and sharing them publicly in your org — visibility compounds faster than any single project.' },
+          { step: 3, role: targetRole, duration: 'Ongoing', skills: ['Technical Strategy', 'Cross-team Influence'], responsibilities: ['Set engineering direction', 'Drive org-wide technical standards', 'Hire and grow the team'], avgSalary: toINR(jitter(salaries[2], 10000)), tips: 'Sponsor two junior engineers actively — your leadership reputation is built on other people\'s success, not just your own.' },
         ],
         requiredSkills: path1Skills,
         estimatedSalaryGrowth: `${Math.round(((salaries[2] - salaries[0]) / salaries[0]) * 100)}% over ${gap} years`,
@@ -538,9 +541,9 @@ const getDynamicCareerPaths = ({ currentRole, targetRole, skills = [], yearsOfEx
         description: `A broader path combining technical growth with early people-management exposure, leading to ${targetRole} via engineering management. Ideal for engineers who want organisational influence.`,
         timelineYears: gap + 1,
         steps: [
-          { step: 1, role: `Tech Lead — ${currentRole} Team`, duration: '12 months', skills: path2Skills.slice(0, 2).concat(['Communication']), responsibilities: ['Lead sprint planning', 'Unblock engineers daily', 'Liaise with product on priorities'], avgSalary: jitter(salaries[0] * 1.1, 8000), tips: 'Ask to own the next quarterly planning cycle for your team — execution ownership fast-tracks leadership credibility.' },
-          { step: 2, role: `Engineering Manager`, duration: '12-18 months', skills: ['Hiring', 'Performance Management', 'OKR Setting'], responsibilities: ['Manage 4-6 engineers', 'Own team OKRs and delivery', 'Interface with Director and Product'], avgSalary: jitter(salaries[1] * 1.1, 9000), tips: 'Schedule bi-weekly 1:1s with every direct report from day 1. Relationships are the foundation of effective management.' },
-          { step: 3, role: targetRole, duration: 'Ongoing', skills: ['P&L Thinking', 'Cross-Org Influence', 'Vision Setting'], responsibilities: ['Define multi-quarter engineering strategy', 'Build and lead senior-to-staff talent', 'Own engineering culture'], avgSalary: jitter(salaries[2] * 1.05, 10000), tips: 'Build your external reputation now — conference talks, blog posts, and open source contributions at the senior level are career accelerants.' },
+          { step: 1, role: `Tech Lead — ${currentRole} Team`, duration: '12 months', skills: path2Skills.slice(0, 2).concat(['Communication']), responsibilities: ['Lead sprint planning', 'Unblock engineers daily', 'Liaise with product on priorities'], avgSalary: toINR(jitter(salaries[0] * 1.1, 8000)), tips: 'Ask to own the next quarterly planning cycle for your team — execution ownership fast-tracks leadership credibility.' },
+          { step: 2, role: `Engineering Manager`, duration: '12-18 months', skills: ['Hiring', 'Performance Management', 'OKR Setting'], responsibilities: ['Manage 4-6 engineers', 'Own team OKRs and delivery', 'Interface with Director and Product'], avgSalary: toINR(jitter(salaries[1] * 1.1, 9000)), tips: 'Schedule bi-weekly 1:1s with every direct report from day 1. Relationships are the foundation of effective management.' },
+          { step: 3, role: targetRole, duration: 'Ongoing', skills: ['P&L Thinking', 'Cross-Org Influence', 'Vision Setting'], responsibilities: ['Define multi-quarter engineering strategy', 'Build and lead senior-to-staff talent', 'Own engineering culture'], avgSalary: toINR(jitter(salaries[2] * 1.05, 10000)), tips: 'Build your external reputation now — conference talks, blog posts, and open source contributions at the senior level are career accelerants.' },
         ],
         requiredSkills: path2Skills,
         estimatedSalaryGrowth: `${Math.round(((salaries[2] * 1.05 - salaries[0]) / salaries[0]) * 100)}% over ${gap + 1} years`,

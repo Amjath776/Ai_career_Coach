@@ -34,7 +34,7 @@ const careerPathSchema = new mongoose.Schema(
             duration: String, // e.g. "6–12 months"
             skills: [String],
             responsibilities: [String],
-            avgSalary: Number,
+            avgSalary: String,
             tips: String,
           },
         ],
@@ -42,7 +42,7 @@ const careerPathSchema = new mongoose.Schema(
         estimatedSalaryGrowth: String,
         difficulty: {
           type: String,
-          enum: ['easy', 'moderate', 'challenging'],
+          enum: ['easy', 'moderate', 'challenging', 'aggressive'],
           default: 'moderate',
         },
       },
