@@ -24,11 +24,11 @@
 
 'use strict';
 
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { OpenAI } = require('openai');
 
 // ── Model handles ─────────────────────────────────────────────────────────────
-let genAI = null;
-let model = null;
+let openai = null;
+let model = null; // keeping 'model' as a truthy flag for backward compatibility
 
 // ── Utility: Pick N random items from an array ────────────────────────────────
 const pickRandom = (arr, n = 1) => {
@@ -43,30 +43,36 @@ const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
 const jitter = (base, range = 5) =>
   Math.min(100, Math.max(0, base + Math.floor((Math.random() - 0.5) * 2 * range)));
 
-// ── Initialize Gemini ─────────────────────────────────────────────────────────
+// ── Initialize AI (OpenRouter) ────────────────────────────────────────────────
 const initGemini = () => {
-  if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'your_gemini_api_key_here') {
-    console.warn('[Gemini] ⚠️  API key not configured — all features will use dynamic fallbacks');
+  if (!process.env.OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY === 'your_openrouter_api_key_here') {
+    console.warn('[AI] ⚠️  OpenRouter API key not configured — all features will use dynamic fallbacks');
     return false;
   }
   try {
-    genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    model  = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
-    console.log('[Gemini] ✅ Initialized successfully');
+    openai = new OpenAI({
+      baseURL: "https://openrouter.ai/api/v1",
+      apiKey: process.env.OPENROUTER_API_KEY,
+    });
+    model = true; // Flag for downstream logic (backward compatibility)
+    console.log('[AI] ✅ OpenRouter initialized successfully');
     return true;
   } catch (err) {
-    console.error('[Gemini] ❌ Initialization failed:', err.message);
+    console.error('[AI] ❌ Initialization failed:', err.message);
     return false;
   }
 };
 
 initGemini();
 
-// ── Core: Call Gemini and return raw text ─────────────────────────────────────
+// ── Core: Call OpenRouter and return raw text ─────────────────────────────────
 const generateContent = async (prompt) => {
-  if (!model) throw new Error('Gemini not initialized — check GEMINI_API_KEY in .env');
-  const result = await model.generateContent(prompt);
-  return result.response.text();
+  if (!openai) throw new Error('AI not initialized — check OPENROUTER_API_KEY in .env');
+  const completion = await openai.chat.completions.create({
+    model: "openrouter/free",
+    messages: [{ role: "user", content: prompt }]
+  });
+  return completion.choices[0].message.content;
 };
 
 // ── Core: Parse JSON from Gemini text response ────────────────────────────────
@@ -83,24 +89,24 @@ const parseJSON = (text) => {
   try {
     return JSON.parse(raw.trim());
   } catch (e) {
-    console.error('[Gemini] parseJSON failed. Snippet:', text.slice(0, 400));
-    throw new Error(`Unparseable JSON from Gemini: ${e.message}`);
+    console.error('[AI] parseJSON failed. Snippet:', text.slice(0, 400));
+    throw new Error(`Unparseable JSON from AI: ${e.message}`);
   }
 };
 
-// ── Wrapper: Try Gemini → on any error switch to dynamic fallback ─────────────
-const withFallback = async (featureName, geminiFn, fallbackFn) => {
-  if (!model) {
-    console.warn(`[Gemini] [${featureName}] No model — using dynamic fallback`);
+// ── Wrapper: Try AI → on any error switch to dynamic fallback ─────────────
+const withFallback = async (featureName, aiFn, fallbackFn) => {
+  if (!openai) {
+    console.warn(`[AI] [${featureName}] No model — using dynamic fallback`);
     return fallbackFn();
   }
   try {
-    const result = await geminiFn();
-    console.log(`[Gemini] [${featureName}] ✅ Using Gemini response`);
+    const result = await aiFn();
+    console.log(`[AI] [${featureName}] ✅ Using AI response`);
     return result;
   } catch (err) {
-    console.error(`[Gemini] [${featureName}] ❌ Gemini failed: ${err.message}`);
-    console.warn(`[Gemini] [${featureName}] ⚡ Switching to dynamic fallback`);
+    console.error(`[AI] [${featureName}] ❌ AI processing failed: ${err.message}`);
+    console.warn(`[AI] [${featureName}] ⚡ Switching to dynamic fallback`);
     return fallbackFn();
   }
 };
