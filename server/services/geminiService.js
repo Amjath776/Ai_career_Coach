@@ -18,7 +18,7 @@ const initGemini = () => {
   }
   try {
     genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
     console.log('✅ Gemini AI initialized successfully');
     return true;
   } catch (err) {
@@ -260,44 +260,121 @@ const analyzeSkillGap = async ({ currentSkills, targetRole, industry }) => {
   try {
     console.log(`[Gemini] analyzeSkillGap called for role="${targetRole}" industry="${industry}"`);
     const prompt = `
-Perform a skill gap analysis for someone targeting: "${targetRole}" in "${industry}"
-Current Skills: ${currentSkills.join(', ')}
+You are an advanced AI Career Coach built for a professional career guidance platform.
 
-Return JSON:
+Your task is to perform a REALISTIC and DYNAMIC Skill Gap Analysis.
+
+====================================
+STRICT RULES (VERY IMPORTANT)
+====================================
+- Always analyze based ONLY on the given input.
+- NEVER return generic or repeated answers.
+- NEVER reuse the same skills for different roles.
+- Output MUST change when Target Role, Industry, or User Skills change.
+- Do NOT hallucinate random skills.
+- Only include skills that are actually relevant to the role.
+
+====================================
+INPUT
+====================================
+Target Role: ${targetRole}
+Target Industry: ${industry}
+Current User Skills: ${currentSkills.join(', ')}
+
+====================================
+TASK
+====================================
+
+1. Identify REAL-WORLD required skills for the given role in the given industry.
+
+2. Compare with user skills:
+   - If skill exists → add to "strengths"
+   - If missing → add to "missingSkills"
+
+3. DO NOT include any user skill in missingSkills.
+
+4. Categorize missing skills into:
+   - critical → Mandatory for getting hired
+   - high → Strongly recommended
+   - medium → Optional but beneficial
+
+5. For EACH missing skill provide:
+   - skill Name
+   - priority (critical/high/medium)
+   - reason (why it is needed for this specific role)
+   - suggestion (how to learn or improve it — be specific)
+
+6. Calculate a REALISTIC readinessScore (0-100):
+   - Count how many required skills the user already has vs total required
+   - Must NOT be constant or random
+
+7. Write a SHORT personalized summary (2 sentences max).
+
+====================================
+OUTPUT FORMAT (STRICT JSON ONLY)
+====================================
+
 {
-  "requiredSkills": [],
-  "missingSkills": [{
-    "skill": "Skill Name",
-    "priority": "critical|high|medium|low",
-    "estimatedLearningTime": "2-4 weeks",
-    "resources": [{ "title": "Resource Name", "type": "course", "url": "https://...", "cost": "free" }]
-  }],
-  "strengthAreas": [],
-  "overallReadiness": <0-100>,
-  "prioritizedLearningOrder": []
-}`;
+  "readinessScore": number,
+  "summary": "personalized 2-sentence explanation",
+  "strengths": ["string"],
+  "missingSkills": [
+    {
+      "skill": "string",
+      "priority": "critical/high/medium",
+      "reason": "string",
+      "suggestion": "string"
+    }
+  ]
+}
+
+Return ONLY valid JSON. No extra text, no markdown, no explanation outside the JSON.`;
+
     const text = await generateContent(prompt);
-    console.log('[Gemini] analyzeSkillGap raw response length:', text.length);
     const result = parseJSON(text);
-    console.log('[Gemini] analyzeSkillGap parsed OK, overallReadiness:', result.overallReadiness);
-    return result;
+
+    console.log(`[Gemini] analyzeSkillGap OK — readinessScore: ${result.readinessScore}, missing: ${result.missingSkills?.length}`);
+
+    return {
+      overallReadiness: result.readinessScore ?? 0,
+      summary:          result.summary || '',
+      strengths:        result.strengths || [],
+      missingSkills:    (result.missingSkills || []).map(ms => ({
+        skill:      ms.skill,
+        priority:   (ms.priority || 'medium').toLowerCase().replace(/[^a-z]/g, ''),
+        reason:     ms.reason || '',
+        suggestion: ms.suggestion || '',
+      })),
+    };
   } catch (err) {
     console.error('[Gemini] analyzeSkillGap error:', err.message);
     return getFallbackSkillGap(currentSkills, targetRole);
   }
 };
 
-const getFallbackSkillGap = (currentSkills, targetRole) => ({
-  requiredSkills: ['Python', 'SQL', 'Data Visualization', 'Machine Learning', 'Statistics', 'Communication'],
-  missingSkills: [
-    { skill: 'Machine Learning', priority: 'critical', estimatedLearningTime: '3-6 months', resources: [{ title: 'Machine Learning by Andrew Ng', type: 'course', url: 'https://coursera.org/learn/machine-learning', cost: 'free with audit' }] },
-    { skill: 'Data Visualization', priority: 'high', estimatedLearningTime: '4-6 weeks', resources: [{ title: 'Tableau for Beginners', type: 'course', url: 'https://www.tableau.com/learn', cost: 'free' }] },
-    { skill: 'Statistics', priority: 'high', estimatedLearningTime: '6-8 weeks', resources: [{ title: 'Khan Academy Statistics', type: 'tutorial', url: 'https://khanacademy.org/math/statistics-probability', cost: 'free' }] },
-  ],
-  strengthAreas: currentSkills.slice(0, 3),
-  overallReadiness: 45,
-  prioritizedLearningOrder: ['Machine Learning', 'Statistics', 'Data Visualization'],
-});
+const getFallbackSkillGap = (currentSkills, targetRole) => {
+  // Score computed from number of skills user already has (not random)
+  const base = Math.min(currentSkills.length * 9, 70);
+  return {
+    overallReadiness: base || 25,
+    summary: `You have some foundational skills, but key gaps remain for the ${targetRole} role. Prioritise the critical skills below to become job-ready as quickly as possible.`,
+    strengths: currentSkills.slice(0, 4),
+    missingSkills: [
+      {
+        skill: 'System Design',
+        priority: 'critical',
+        reason: `System design is a core requirement for most ${targetRole} interviews and day-to-day work.`,
+        suggestion: 'Study "Designing Data-Intensive Applications" and practice system design problems on bytebytego.com.',
+      },
+      {
+        skill: 'Cloud Fundamentals (AWS or GCP)',
+        priority: 'high',
+        reason: 'Modern engineering teams deploy on cloud platforms and expect engineers to be cloud-literate.',
+        suggestion: 'Complete the free AWS Cloud Practitioner Essentials course at explore.skillbuilder.aws.',
+      },
+    ],
+  };
+};
 
 // ──────────────────────────────────────────────────────────────────────────────
 // LEARNING ROADMAP

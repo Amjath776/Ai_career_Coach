@@ -159,14 +159,14 @@ export default function SkillGapPage() {
                             <span className={`badge ${PRIORITY_COLORS[skill.priority] || 'badge-muted'}`}>{skill.priority}</span>
                           </div>
                           <div style={{ fontSize: '0.8125rem', color: 'var(--muted)', marginBottom: '0.5rem' }}>
-                             Est. time: {skill.estimatedLearningTime}
+                            Est. time: {skill.estimatedLearningTime}
                           </div>
                           {skill.resources?.length > 0 && (
                             <div>
                               <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.375rem' }}>Resources:</div>
                               {skill.resources.slice(0, 2).map((r, ri) => (
                                 <div key={ri} style={{ fontSize: '0.8125rem', color: 'var(--info)', marginBottom: '0.2rem' }}>
-                                   {r.url ? <a href={r.url} target="_blank" rel="noreferrer" style={{ color: 'var(--info)' }}>{r.title}</a> : r.title}
+                                  {r.url ? <a href={r.url} target="_blank" rel="noreferrer" style={{ color: 'var(--info)' }}>{r.title}</a> : r.title}
                                   {r.cost && <span style={{ color: 'var(--muted)' }}> ({r.cost})</span>}
                                 </div>
                               ))}
@@ -192,7 +192,7 @@ export default function SkillGapPage() {
                 </div>
               ) : (
                 <div className="card" style={{ textAlign: 'center', padding: '4rem' }}>
-                  
+
                   <h3>No Analysis Yet</h3>
                   <p style={{ color: 'var(--muted)', marginTop: '0.5rem' }}>Enter a target role above to discover your skill gaps.</p>
                 </div>

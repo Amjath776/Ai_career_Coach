@@ -58,3 +58,4 @@ const skillGapSchema = new mongoose.Schema(
 
 module.exports = mongoose.model('SkillGap', skillGapSchema);
 
+
