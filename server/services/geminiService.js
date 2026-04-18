@@ -352,29 +352,117 @@ Return ONLY valid JSON. No extra text, no markdown, no explanation outside the J
   }
 };
 
+// ── Role-specific fallback skill sets ─────────────────────────────────────
+// Used when Gemini API is unavailable. Each role has unique, relevant skills.
+const ROLE_FALLBACK_SKILLS = {
+  'data scientist': [
+    { skill: 'Machine Learning (Scikit-learn / XGBoost)', priority: 'critical', reason: 'Core competency for building predictive models in a Data Scientist role.', suggestion: 'Complete the ML Specialization by Andrew Ng on Coursera.' },
+    { skill: 'SQL & Database Querying', priority: 'critical', reason: 'Data scientists must extract and manipulate data from relational databases daily.', suggestion: 'Practice on Mode Analytics SQL Tutorial and solve LeetCode SQL problems.' },
+    { skill: 'Data Visualization (Matplotlib / Seaborn / Tableau)', priority: 'high', reason: 'Communicating findings to stakeholders requires strong visualization skills.', suggestion: 'Build 5 notebooks on Kaggle using Seaborn, then create a Tableau Public portfolio.' },
+    { skill: 'Statistical Analysis & Hypothesis Testing', priority: 'high', reason: 'A/B testing, confidence intervals, and p-values are standard toolkit items.', suggestion: 'Work through Statistics for Data Science on Khan Academy and use SciPy in Python.' },
+    { skill: 'Deep Learning Fundamentals (PyTorch / TensorFlow)', priority: 'medium', reason: 'Many advanced DS roles expect familiarity with neural network frameworks.', suggestion: 'Complete the fast.ai Practical Deep Learning course (fast.ai) -- free and project-driven.' },
+  ],
+  'frontend developer': [
+    { skill: 'TypeScript', priority: 'critical', reason: 'TypeScript is the industry standard for large-scale frontend codebases.', suggestion: 'Complete the official TypeScript handbook then migrate a personal project from JS to TS.' },
+    { skill: 'Testing (Jest + React Testing Library)', priority: 'critical', reason: 'Frontend unit and integration testing is mandatory at production-grade companies.', suggestion: 'Follow Kent C. Dodds Testing JavaScript course and add tests to existing React projects.' },
+    { skill: 'State Management (Redux Toolkit / Zustand)', priority: 'high', reason: 'Complex frontend apps require scalable state management beyond useState/useContext.', suggestion: 'Build a full CRUD app using Redux Toolkit following the official RTK docs.' },
+    { skill: 'Web Performance Optimization (Core Web Vitals)', priority: 'high', reason: 'LCP, FID, and CLS scores directly impact SEO and user retention.', suggestion: 'Study web.dev/performance and audit your projects using Lighthouse in Chrome DevTools.' },
+    { skill: 'Accessibility (WCAG 2.1 / ARIA)', priority: 'medium', reason: 'A11y compliance is a legal requirement in many markets and expected by employers.', suggestion: 'Complete the Web Accessibility course on Udacity (free) and integrate axe-core into CI.' },
+  ],
+  'devops engineer': [
+    { skill: 'Kubernetes (K8s)', priority: 'critical', reason: 'Container orchestration with K8s is the de-facto standard for production deployments.', suggestion: 'Work through the Killer.sh CKA environment and complete the free Introduction to Kubernetes on edX.' },
+    { skill: 'CI/CD Pipelines (GitHub Actions / Jenkins)', priority: 'critical', reason: 'Designing and maintaining automated build-test-deploy pipelines is a core DevOps task.', suggestion: 'Build a full CI/CD pipeline for a Node.js app using GitHub Actions.' },
+    { skill: 'Infrastructure as Code (Terraform)', priority: 'high', reason: 'Terraform is the most widely adopted IaC tool for provisioning cloud resources.', suggestion: 'Complete the HashiCorp Get Started track on developer.hashicorp.com.' },
+    { skill: 'Cloud Platforms (AWS / GCP / Azure)', priority: 'high', reason: 'DevOps engineers are expected to work with cloud-managed services daily.', suggestion: 'Earn the AWS Certified Solutions Architect Associate via A Cloud Guru.' },
+    { skill: 'Monitoring & Observability (Prometheus / Grafana)', priority: 'medium', reason: 'Alerting, dashboards, and SLO tracking are essential for production reliability.', suggestion: 'Set up a Prometheus + Grafana stack with Docker Compose and instrument a Node.js app.' },
+  ],
+  'backend developer': [
+    { skill: 'System Design & Scalable Architecture', priority: 'critical', reason: 'Designing distributed, fault-tolerant systems is a fundamental backend skill.', suggestion: 'Read Designing Data-Intensive Applications by Kleppmann and practice on bytebytego.com.' },
+    { skill: 'RESTful API Design & OpenAPI / Swagger', priority: 'critical', reason: 'Well-documented, versioned APIs are a baseline expectation for backend engineers.', suggestion: 'Design a CRUD API with OpenAPI 3.0 spec using Swagger Editor.' },
+    { skill: 'SQL Databases & Query Optimization', priority: 'high', reason: 'Slow queries and missing indexes are the most common production performance issues.', suggestion: 'Study EXPLAIN execution plans in PostgreSQL and read Use the Index Luke (use-the-index-luke.com).' },
+    { skill: 'Message Queues (RabbitMQ / Kafka)', priority: 'high', reason: 'Async processing via message brokers is standard in microservices architectures.', suggestion: 'Build a producer-consumer system with BullMQ and deploy with Docker Compose.' },
+    { skill: 'Caching Strategies (Redis)', priority: 'medium', reason: 'Caching reduces latency and database load in high-traffic systems.', suggestion: 'Integrate Redis into a Node.js API and benchmark before/after with k6 or Artillery.' },
+  ],
+  'machine learning engineer': [
+    { skill: 'MLOps & Model Deployment (MLflow / FastAPI)', priority: 'critical', reason: 'ML engineers must operationalize models -- deployment pipelines are mandatory.', suggestion: 'Deploy a Scikit-learn model as a FastAPI service and containerise with Docker.' },
+    { skill: 'Deep Learning Frameworks (PyTorch)', priority: 'critical', reason: 'PyTorch is the dominant framework in research and production ML engineering.', suggestion: 'Complete the official PyTorch tutorials and implement a CNN from scratch.' },
+    { skill: 'Feature Engineering & Data Pipelines (Apache Spark)', priority: 'high', reason: 'Large-scale feature pipelines are the backbone of production ML systems.', suggestion: 'Complete the Apache Spark with Python track on Databricks Academy (free tier).' },
+    { skill: 'Model Monitoring & Drift Detection', priority: 'high', reason: 'Models degrade over time; ML engineers must detect and respond to data drift.', suggestion: 'Integrate Evidently AI (evidentlyai.com) into a sample ML pipeline.' },
+    { skill: 'Cloud ML Platforms (AWS SageMaker / GCP Vertex AI)', priority: 'medium', reason: 'Enterprise ML workloads are deployed on managed cloud ML platforms.', suggestion: 'Complete the Machine Learning on AWS workshop at workshops.aws.' },
+  ],
+  'data engineer': [
+    { skill: 'Apache Spark & PySpark', priority: 'critical', reason: 'Distributed processing with Spark is the de-facto standard for large-scale ETL.', suggestion: 'Complete the Apache Spark with Python course on Databricks Academy.' },
+    { skill: 'Data Warehouse Design (Snowflake / BigQuery / Redshift)', priority: 'critical', reason: 'Data engineers must design and optimize cloud data warehouse schemas.', suggestion: 'Complete the Snowflake Getting Started quickstart (quickstarts.snowflake.com).' },
+    { skill: 'Workflow Orchestration (Apache Airflow)', priority: 'high', reason: 'Scheduling and monitoring complex data pipelines requires an orchestration tool.', suggestion: 'Build a local Airflow DAG ingesting data to PostgreSQL using Docker Compose.' },
+    { skill: 'Streaming Data (Apache Kafka)', priority: 'high', reason: 'Real-time data pipelines are increasingly expected in modern data engineering.', suggestion: 'Build a producer-consumer pipeline with Confluent Kafka (free Cloud tier).' },
+    { skill: 'dbt (Data Build Tool)', priority: 'medium', reason: 'dbt is the standard for SQL-first data transformation in analytics engineering.', suggestion: 'Complete the dbt Fundamentals course on learn.getdbt.com (free).' },
+  ],
+  'product manager': [
+    { skill: 'Product Metrics & Analytics (SQL / Amplitude)', priority: 'critical', reason: 'Data-driven decisions require PMs to pull and interpret metrics independently.', suggestion: 'Learn product SQL on Mode Analytics and set up a funnel in Amplitude (free plan).' },
+    { skill: 'User Research & Usability Testing', priority: 'critical', reason: 'PMs must deeply understand user needs through interviews and usability sessions.', suggestion: 'Read The Mom Test by Rob Fitzpatrick and conduct 5 customer discovery interviews.' },
+    { skill: 'Agile / Scrum Methodologies', priority: 'high', reason: 'Most engineering teams use Agile rituals that PMs are expected to lead.', suggestion: 'Earn the PSPO I certification (Scrum.org) and facilitate a sprint planning session.' },
+    { skill: 'Roadmapping & Prioritisation (RICE / MoSCoW)', priority: 'high', reason: 'Structuring a clear, justified roadmap is a core PM output.', suggestion: 'Apply RICE scoring to your current backlog and document the rationale publicly.' },
+    { skill: 'Technical Literacy (APIs, System Architecture)', priority: 'medium', reason: 'PMs who understand engineering constraints write cleaner specs and collaborate better.', suggestion: 'Complete API Fundamentals on Postman Learning Center (free, learning.postman.com).' },
+  ],
+};
+
+// Default when no role keyword matches
+const DEFAULT_FALLBACK_SKILLS = [
+  { skill: 'System Design & Architecture', priority: 'critical', reason: 'System design is a core requirement across senior technical roles.', suggestion: 'Study Designing Data-Intensive Applications and practice on bytebytego.com.' },
+  { skill: 'Cloud Fundamentals (AWS or GCP)', priority: 'high', reason: 'Cloud literacy is expected by modern engineering teams regardless of specialization.', suggestion: 'Complete the free AWS Cloud Practitioner Essentials at explore.skillbuilder.aws.' },
+  { skill: 'Automated Testing', priority: 'high', reason: 'Production-quality code is always covered by automated tests.', suggestion: 'Add unit + integration + E2E tests to an existing project using your stack testing framework.' },
+];
+
+/**
+ * Role-aware fallback for when Gemini is unavailable.
+ * Returns unique, role-specific missing skills and correctly excludes user skills.
+ */
 const getFallbackSkillGap = (currentSkills, targetRole) => {
-  // Score computed from number of skills user already has (not random)
-  const base = Math.min(currentSkills.length * 9, 70);
+  const roleLower = (targetRole || '').toLowerCase();
+
+  // Full phrase match first, then single significant word match
+  const matchedKey =
+    Object.keys(ROLE_FALLBACK_SKILLS).find((key) => roleLower.includes(key)) ||
+    Object.keys(ROLE_FALLBACK_SKILLS).find((key) =>
+      key.split(' ').some((word) => word.length > 3 && roleLower.includes(word))
+    );
+
+  const allRoleSkills = matchedKey
+    ? ROLE_FALLBACK_SKILLS[matchedKey]
+    : DEFAULT_FALLBACK_SKILLS;
+
+  // Exclude skills the user already has (case-insensitive partial match)
+  const userSkillsLower = (currentSkills || []).map((s) => s.toLowerCase());
+  const filteredMissing = allRoleSkills.filter(
+    (ms) =>
+      !userSkillsLower.some(
+        (us) =>
+          ms.skill.toLowerCase().includes(us) ||
+          us.includes(ms.skill.toLowerCase().split(' ')[0])
+      )
+  );
+
+  // Readiness = % of role skills the user already covers
+  const total      = allRoleSkills.length;
+  const alreadyHas = total - filteredMissing.length;
+  const readiness  = total > 0 ? Math.round((alreadyHas / total) * 100) : 25;
+
+  console.warn(
+    `[Gemini] FALLBACK active — role="${targetRole}" key="${matchedKey || 'default'}" ` +
+    `readiness=${readiness}% missing=${filteredMissing.length}`
+  );
+
   return {
-    overallReadiness: base || 25,
-    summary: `You have some foundational skills, but key gaps remain for the ${targetRole} role. Prioritise the critical skills below to become job-ready as quickly as possible.`,
-    strengths: currentSkills.slice(0, 4),
-    missingSkills: [
-      {
-        skill: 'System Design',
-        priority: 'critical',
-        reason: `System design is a core requirement for most ${targetRole} interviews and day-to-day work.`,
-        suggestion: 'Study "Designing Data-Intensive Applications" and practice system design problems on bytebytego.com.',
-      },
-      {
-        skill: 'Cloud Fundamentals (AWS or GCP)',
-        priority: 'high',
-        reason: 'Modern engineering teams deploy on cloud platforms and expect engineers to be cloud-literate.',
-        suggestion: 'Complete the free AWS Cloud Practitioner Essentials course at explore.skillbuilder.aws.',
-      },
-    ],
+    overallReadiness: readiness,
+    summary:
+      `You have ${alreadyHas} of ${total} key skills required for a ${targetRole} role. ` +
+      `Focus on the ${filteredMissing.filter((s) => s.priority === 'critical').length} critical ` +
+      `gaps below to accelerate your job readiness.`,
+    strengths:     (currentSkills || []).slice(0, 6),
+    missingSkills:  filteredMissing,
   };
 };
+
 
 // ──────────────────────────────────────────────────────────────────────────────
 // LEARNING ROADMAP
