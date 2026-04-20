@@ -158,9 +158,6 @@ export default function SkillGapPage() {
                             <strong style={{ fontSize: '0.9375rem' }}>{skill.skill}</strong>
                             <span className={`badge ${PRIORITY_COLORS[skill.priority] || 'badge-muted'}`}>{skill.priority}</span>
                           </div>
-                          <div style={{ fontSize: '0.8125rem', color: 'var(--muted)', marginBottom: '0.5rem' }}>
-                            Est. time: {skill.estimatedLearningTime}
-                          </div>
                           {skill.resources?.length > 0 && (
                             <div>
                               <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.375rem' }}>Resources:</div>
