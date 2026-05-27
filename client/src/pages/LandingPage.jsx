@@ -19,10 +19,10 @@ const FEATURES = [
 ];
 
 const STATS = [
-  { value: '10,000+', label: 'Career Plans Generated' },
+  { value: '1,00,000+', label: 'Career Plans Generated' },
   { value: '95%', label: 'User Satisfaction' },
   { value: '8', label: 'AI-Powered Tools' },
-  { value: '500+', label: 'Job Roles Covered' },
+  { value: '5,000+', label: 'Job Roles Covered' },
 ];
 
 export default function LandingPage() {
